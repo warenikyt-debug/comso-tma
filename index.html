@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pac-Man: Dark Dimension</title>
+    <title>Pac-Man Arcade</title>
     <style>
         * {
             margin: 0;
@@ -17,133 +17,23 @@
             background: #000;
             color: #fff;
             overflow: hidden;
+            height: 100vh;
+            width: 100vw;
         }
 
         #gameContainer {
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             position: relative;
             background: #000;
-            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
         }
 
         #gameCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-
-        #hud {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px 25px;
-            border-radius: 10px;
-            border: 2px solid #00ffff;
-        }
-
-        #score {
-            font-size: 24px;
-            color: #ffff00;
-            font-weight: bold;
-        }
-
-        #lives {
-            font-size: 20px;
-            color: #ff0000;
-            margin-top: 5px;
-        }
-
-        #level {
-            font-size: 18px;
-            color: #00ff00;
-            margin-top: 5px;
-        }
-
-        #rageMeter {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #ff0000;
-            z-index: 100;
-            width: 250px;
-        }
-
-        #rageText {
-            font-size: 16px;
-            color: #ff0000;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        #rageBar {
-            width: 100%;
-            height: 20px;
-            background: #333;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #444;
-        }
-
-        #rageFill {
-            height: 100%;
-            background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
-            width: 0%;
-            transition: width 0.3s;
-            border-radius: 10px;
-        }
-
-        #gameOver {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 40px;
-            border-radius: 15px;
-            border: 3px solid #ff0000;
-            text-align: center;
-            z-index: 200;
-            display: none;
-            width: 90%;
-            max-width: 500px;
-        }
-
-        #gameOver h1 {
-            color: #ff0000;
-            font-size: 36px;
-            margin-bottom: 20px;
-        }
-
-        #finalScore {
-            font-size: 48px;
-            color: #ffff00;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-
-        #restartBtn {
-            background: linear-gradient(45deg, #ff0000, #8b0000);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            margin-top: 20px;
-            font-weight: bold;
-            transition: transform 0.2s;
-        }
-
-        #restartBtn:hover {
-            transform: scale(1.05);
+            background: #000;
         }
 
         #startScreen {
@@ -152,67 +42,79 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, #000000 0%, #001122 100%);
-            z-index: 300;
+            background: #000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 20px;
+            z-index: 100;
         }
 
-        #startScreen h1 {
+        #gameScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 50;
+        }
+
+        #gameOverScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .title {
+            color: #ff0;
             font-size: 48px;
-            color: #ffff00;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px #ffff00;
-        }
-
-        #startScreen h2 {
-            color: #00ffff;
-            font-size: 24px;
             margin-bottom: 30px;
+            text-align: center;
         }
 
-        .rules {
-            background: rgba(0, 100, 255, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px solid #00ffff;
-            max-width: 600px;
-            margin: 20px 0;
-        }
-
-        .rules h3 {
-            color: #ffff00;
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-
-        .rules p {
-            color: #ffffff;
-            margin: 8px 0;
-            text-align: left;
-            padding-left: 10px;
-            line-height: 1.4;
-        }
-
-        #startBtn {
-            background: linear-gradient(45deg, #ff0000, #ffff00);
-            color: black;
-            border: none;
-            padding: 20px 50px;
+        .subtitle {
+            color: #0ff;
             font-size: 24px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        button {
+            background: linear-gradient(45deg, #f00, #ff0);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
             border-radius: 25px;
             cursor: pointer;
-            margin-top: 30px;
+            margin: 10px;
             font-weight: bold;
             transition: transform 0.2s;
         }
 
-        #startBtn:hover {
+        button:hover {
             transform: scale(1.1);
+        }
+
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            z-index: 150;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #0ff;
         }
 
         .controls {
@@ -223,193 +125,124 @@
             display: flex;
             justify-content: center;
             gap: 20px;
-            z-index: 100;
+            z-index: 150;
         }
 
         .controlBtn {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            border: 3px solid #00ffff;
-            background: rgba(0, 100, 255, 0.3);
-            color: white;
+            background: rgba(0, 100, 255, 0.5);
+            border: 2px solid #0ff;
+            color: #fff;
             font-size: 24px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.1s;
         }
 
         .controlBtn:active {
-            transform: scale(0.9);
-            background: rgba(0, 255, 255, 0.5);
+            background: rgba(0, 255, 255, 0.7);
         }
 
-        #powerBtn {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(255, 215, 0, 0.3);
-            border-color: #ffd700;
-        }
-
-        .message {
-            position: absolute;
-            color: #ffff00;
-            font-size: 20px;
-            text-shadow: 0 0 5px #000;
-            z-index: 150;
-            pointer-events: none;
-            animation: messageFloat 2s forwards;
-            text-align: center;
-        }
-
-        @keyframes messageFloat {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(-100px); opacity: 0; }
-        }
-
-        #insanityLevel {
-            position: absolute;
-            bottom: 120px;
-            left: 20px;
-            font-size: 16px;
-            color: #ff00ff;
+        .instructions {
             background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #ff00ff;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #ff0;
+            max-width: 500px;
+            margin: 20px;
         }
 
-        #mapIndicator {
-            position: absolute;
-            top: 150px;
-            right: 20px;
-            width: 150px;
-            height: 150px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #00ffff;
-            border-radius: 5px;
-            z-index: 90;
-            pointer-events: none;
-            overflow: hidden;
+        .instructions h3 {
+            color: #ff0;
+            margin-bottom: 10px;
         }
 
-        @media (max-width: 768px) {
-            .controlBtn {
-                width: 60px;
-                height: 60px;
-                font-size: 20px;
-            }
-            
-            #startScreen h1 {
-                font-size: 36px;
-            }
-            
-            #rageMeter {
-                width: 200px;
-            }
+        .instructions p {
+            margin: 5px 0;
+            color: #fff;
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
-        <canvas id="gameCanvas"></canvas>
-        
-        <div id="hud">
-            <div id="score">Счет: 0</div>
-            <div id="lives">Жизни: 3</div>
-            <div id="level">Уровень: 1</div>
-        </div>
-        
-        <div id="rageMeter">
-            <div id="rageText">Уровень стресса</div>
-            <div id="rageBar">
-                <div id="rageFill"></div>
-            </div>
-        </div>
-        
-        <div id="mapIndicator"></div>
-        
-        <div id="insanityLevel">Сложность: 0%</div>
-        
-        <div id="gameOver">
-            <h1>Игра окончена</h1>
-            <div style="color: #ccc; margin-bottom: 20px;">
-                Вы достигли предела
-            </div>
-            <div id="finalScore">0</div>
-            <button id="restartBtn">Начать заново</button>
-        </div>
-        
         <div id="startScreen">
-            <h1>PAC-MAN</h1>
-            <h2>Dark Dimension</h2>
+            <h1 class="title">PAC-MAN ARCADE</h1>
+            <h2 class="subtitle">Собери все точки, избегай призраков!</h2>
             
-            <div class="rules">
-                <h3>Цель игры:</h3>
-                <p>• Собирайте точки в огромном лабиринте</p>
-                <p>• Избегайте призраков и других врагов</p>
-                <p>• Используйте энерджайзеры для получения преимуществ</p>
-                <p>• Доберитесь до следующего уровня</p>
-                <p>• Не позволяйте стрессу достигнуть максимума</p>
-                
-                <h3>Особенности:</h3>
-                <p>• Динамически меняющийся лабиринт</p>
-                <p>• Враги с разным поведением</p>
-                <p>• Порталы для телепортации</p>
-                <p>• Усиления и ловушки</p>
+            <div class="instructions">
+                <h3>Как играть:</h3>
+                <p>• Используй стрелки для движения</p>
+                <p>• Собирай белые точки для очков</p>
+                <p>• Большие точки дают временную силу</p>
+                <p>• Избегай призраков или съешь их в режиме силы</p>
+                <p>• У тебя 3 жизни</p>
             </div>
             
-            <button id="startBtn">Начать игру</button>
+            <button id="startBtn">НАЧАТЬ ИГРУ</button>
         </div>
         
-        <div class="controls">
-            <button class="controlBtn" id="upBtn">↑</button>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button class="controlBtn" id="leftBtn">←</button>
-                <button class="controlBtn" id="rightBtn">→</button>
+        <div id="gameScreen">
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            
+            <div id="hud">
+                <div>Счёт: <span id="score">0</span></div>
+                <div>Жизни: <span id="lives">3</span></div>
+                <div>Уровень: <span id="level">1</span></div>
             </div>
-            <button class="controlBtn" id="downBtn">↓</button>
+            
+            <div class="controls">
+                <button class="controlBtn" id="upBtn">↑</button>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="controlBtn" id="leftBtn">←</button>
+                    <button class="controlBtn" id="rightBtn">→</button>
+                </div>
+                <button class="controlBtn" id="downBtn">↓</button>
+            </div>
         </div>
         
-        <button class="controlBtn" id="powerBtn">PWR</button>
+        <div id="gameOverScreen">
+            <h1 class="title">ИГРА ОКОНЧЕНА</h1>
+            <h2 class="subtitle">Финальный счёт: <span id="finalScore">0</span></h2>
+            <button id="restartBtn">ИГРАТЬ СНОВА</button>
+            <button id="menuBtn">В МЕНЮ</button>
+        </div>
     </div>
 
     <script>
         // Получаем элементы
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const startBtn = document.getElementById('startBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const menuBtn = document.getElementById('menuBtn');
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreElement = document.getElementById('score');
         const livesElement = document.getElementById('lives');
         const levelElement = document.getElementById('level');
-        const rageFill = document.getElementById('rageFill');
-        const gameOverScreen = document.getElementById('gameOver');
         const finalScoreElement = document.getElementById('finalScore');
-        const restartBtn = document.getElementById('restartBtn');
-        const startScreen = document.getElementById('startScreen');
-        const startBtn = document.getElementById('startBtn');
         const upBtn = document.getElementById('upBtn');
         const leftBtn = document.getElementById('leftBtn');
         const downBtn = document.getElementById('downBtn');
         const rightBtn = document.getElementById('rightBtn');
-        const powerBtn = document.getElementById('powerBtn');
-        const insanityLevel = document.getElementById('insanityLevel');
-        const mapIndicator = document.getElementById('mapIndicator');
-        const mapCtx = mapIndicator.getContext('2d');
 
         // Настройка canvas
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        mapIndicator.width = 150;
-        mapIndicator.height = 150;
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
-        // Размеры лабиринта
-        const MAP_SIZE = 25;
-        const CELL_SIZE = 40;
-        const GRID_WIDTH = MAP_SIZE * CELL_SIZE;
-        const GRID_HEIGHT = MAP_SIZE * CELL_SIZE;
+        // Игровые константы
+        const GRID_SIZE = 19;
+        const CELL_SIZE = Math.min(canvas.width, canvas.height) / GRID_SIZE;
+        const PACMAN_SPEED = 4;
+        const GHOST_SPEED = 2;
 
         // Игровые переменные
         let game = {
@@ -417,630 +250,132 @@
             score: 0,
             lives: 3,
             level: 1,
-            rage: 0,
-            insanity: 0,
-            gameOver: false,
             powerMode: false,
             powerTimer: 0,
-            cameraX: 0,
-            cameraY: 0,
-            dotsCollected: 0,
-            totalDots: 0,
-            map: []
+            dotsLeft: 0
         };
 
         // Пакман
-        const pacman = {
-            x: 12 * CELL_SIZE + CELL_SIZE / 2,
-            y: 12 * CELL_SIZE + CELL_SIZE / 2,
-            radius: 15,
-            speed: 4,
+        let pacman = {
+            x: CELL_SIZE * 9.5,
+            y: CELL_SIZE * 10.5,
+            radius: CELL_SIZE * 0.4,
             direction: { x: 0, y: 0 },
+            nextDirection: { x: 0, y: 0 },
             mouthAngle: 0.2,
-            mouthSpeed: 0.1,
-            color: '#ffff00',
-            trail: [],
-            invincible: false,
-            invincibleTimer: 0
+            mouthSpeed: 0.1
         };
 
-        // Объекты игры
-        let dots = [];
-        let energizers = [];
-        let ghosts = [];
-        let portals = [];
-        let powerUps = [];
-        let particles = [];
-        let messages = [];
+        // Лабиринт (1 - стена, 0 - проход, 2 - точка, 3 - большая точка)
+        let maze = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+            [1,3,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,3,1],
+            [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1],
+            [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+            [1,1,1,1,2,1,1,1,0,1,0,1,1,1,2,1,1,1,1],
+            [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
+            [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+            [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
+            [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+            [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
+            [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+            [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+            [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+            [1,3,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,3,1],
+            [1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1],
+            [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+            [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
+            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
 
-        // Инициализация карты
-        function initMap() {
-            game.map = [];
-            dots = [];
-            energizers = [];
-            portals = [];
-            ghosts = [];
-            powerUps = [];
+        // Призраки
+        let ghosts = [
+            { x: CELL_SIZE * 9.5, y: CELL_SIZE * 8.5, color: '#f00', direction: { x: 1, y: 0 }, scared: false },
+            { x: CELL_SIZE * 8.5, y: CELL_SIZE * 9.5, color: '#f0f', direction: { x: -1, y: 0 }, scared: false },
+            { x: CELL_SIZE * 9.5, y: CELL_SIZE * 10.5, color: '#0ff', direction: { x: 0, y: 1 }, scared: false },
+            { x: CELL_SIZE * 10.5, y: CELL_SIZE * 9.5, color: '#ff0', direction: { x: 0, y: -1 }, scared: false }
+        ];
+
+        // Подсчёт точек
+        function countDots() {
+            let count = 0;
+            for (let row of maze) {
+                for (let cell of row) {
+                    if (cell === 2 || cell === 3) count++;
+                }
+            }
+            return count;
+        }
+
+        game.dotsLeft = countDots();
+
+        // Функции отрисовки
+        function drawMaze() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Создаем лабиринт
-            for (let y = 0; y < MAP_SIZE; y++) {
-                game.map[y] = [];
-                for (let x = 0; x < MAP_SIZE; x++) {
-                    // Создаем стены по краям и внутри
-                    const isWall = x === 0 || y === 0 || x === MAP_SIZE - 1 || y === MAP_SIZE - 1 || 
-                                  (x % 3 === 0 && y % 3 === 0 && Math.random() > 0.4);
-                    game.map[y][x] = isWall ? 1 : 0;
+            for (let y = 0; y < maze.length; y++) {
+                for (let x = 0; x < maze[y].length; x++) {
+                    const cellX = x * CELL_SIZE;
+                    const cellY = y * CELL_SIZE;
                     
-                    // Точки в проходимых клетках
-                    if (!isWall && Math.random() > 0.3) {
-                        dots.push({
-                            x: x * CELL_SIZE + CELL_SIZE / 2,
-                            y: y * CELL_SIZE + CELL_SIZE / 2,
-                            radius: 4,
-                            color: '#ffffff',
-                            collected: false
-                        });
+                    if (maze[y][x] === 1) {
+                        // Стена
+                        ctx.fillStyle = '#00f';
+                        ctx.fillRect(cellX, cellY, CELL_SIZE, CELL_SIZE);
+                        ctx.strokeStyle = '#008';
+                        ctx.strokeRect(cellX, cellY, CELL_SIZE, CELL_SIZE);
+                    } else if (maze[y][x] === 2) {
+                        // Точка
+                        ctx.fillStyle = '#fff';
+                        ctx.beginPath();
+                        ctx.arc(cellX + CELL_SIZE/2, cellY + CELL_SIZE/2, CELL_SIZE/8, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else if (maze[y][x] === 3) {
+                        // Большая точка
+                        ctx.fillStyle = '#fff';
+                        ctx.beginPath();
+                        ctx.arc(cellX + CELL_SIZE/2, cellY + CELL_SIZE/2, CELL_SIZE/4, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Мерцание
+                        if (Math.sin(Date.now() / 200) > 0) {
+                            ctx.shadowColor = '#fff';
+                            ctx.shadowBlur = 10;
+                            ctx.beginPath();
+                            ctx.arc(cellX + CELL_SIZE/2, cellY + CELL_SIZE/2, CELL_SIZE/4, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        }
                     }
                 }
             }
-            
-            // Добавляем энерджайзеры
-            for (let i = 0; i < 4; i++) {
-                const x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                const y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                if (game.map[y][x] === 0) {
-                    energizers.push({
-                        x: x * CELL_SIZE + CELL_SIZE / 2,
-                        y: y * CELL_SIZE + CELL_SIZE / 2,
-                        radius: 8,
-                        color: '#00ffff',
-                        collected: false
-                    });
-                }
-            }
-            
-            // Добавляем порталы
-            for (let i = 0; i < 3; i++) {
-                const x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                const y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                if (game.map[y][x] === 0) {
-                    portals.push({
-                        x: x * CELL_SIZE + CELL_SIZE / 2,
-                        y: y * CELL_SIZE + CELL_SIZE / 2,
-                        radius: 15,
-                        color: '#ff00ff',
-                        id: i
-                    });
-                }
-            }
-            
-            // Связываем порталы попарно
-            for (let i = 0; i < portals.length; i += 2) {
-                if (portals[i + 1]) {
-                    portals[i].linkedTo = portals[i + 1];
-                    portals[i + 1].linkedTo = portals[i];
-                }
-            }
-            
-            game.totalDots = dots.length;
-            
-            // Создаем призраков
-            createGhosts();
-            createPowerUps();
         }
 
-        // Создание призраков
-        function createGhosts() {
-            const ghostColors = ['#ff0000', '#ff69b4', '#00ffff', '#ffa500'];
-            
-            for (let i = 0; i < 4; i++) {
-                let x, y;
-                do {
-                    x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                    y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                } while (game.map[y][x] !== 0);
-                
-                ghosts.push({
-                    x: x * CELL_SIZE + CELL_SIZE / 2,
-                    y: y * CELL_SIZE + CELL_SIZE / 2,
-                    radius: 14,
-                    color: ghostColors[i],
-                    speed: 2 + Math.random(),
-                    direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
-                    behavior: ['chase', 'scatter', 'random'][i % 3],
-                    scared: false,
-                    scaredTimer: 0
-                });
-            }
-        }
-
-        // Создание усилений
-        function createPowerUps() {
-            const powerTypes = [
-                { type: 'speed', color: '#00ff00', duration: 300 },
-                { type: 'invincible', color: '#ffff00', duration: 200 }
-            ];
-            
-            for (let i = 0; i < 2; i++) {
-                let x, y;
-                do {
-                    x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                    y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                } while (game.map[y][x] !== 0);
-                
-                const power = powerTypes[Math.floor(Math.random() * powerTypes.length)];
-                powerUps.push({
-                    x: x * CELL_SIZE + CELL_SIZE / 2,
-                    y: y * CELL_SIZE + CELL_SIZE / 2,
-                    radius: 10,
-                    color: power.color,
-                    type: power.type,
-                    duration: power.duration,
-                    collected: false
-                });
-            }
-        }
-
-        // Частицы
-        class Particle {
-            constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 4 + 1;
-                this.speedX = Math.random() * 4 - 2;
-                this.speedY = Math.random() * 4 - 2;
-                this.color = color;
-                this.life = 30;
-            }
-
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.life--;
-                return this.life > 0;
-            }
-
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.life / 30;
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        // Функции игры
-        function updatePacman() {
-            // Движение
-            let newX = pacman.x + pacman.direction.x * pacman.speed;
-            let newY = pacman.y + pacman.direction.y * pacman.speed;
-            
-            // Телепортация через края
-            if (newX < 0) newX = GRID_WIDTH;
-            if (newX > GRID_WIDTH) newX = 0;
-            if (newY < 0) newY = GRID_HEIGHT;
-            if (newY > GRID_HEIGHT) newY = 0;
-            
-            // Проверка стен
-            const gridX = Math.floor(newX / CELL_SIZE);
-            const gridY = Math.floor(newY / CELL_SIZE);
-            
-            if (gridX >= 0 && gridX < MAP_SIZE && gridY >= 0 && gridY < MAP_SIZE) {
-                if (game.map[gridY][gridX] === 0) {
-                    pacman.x = newX;
-                    pacman.y = newY;
-                }
-            }
-            
+        function drawPacman() {
             // Анимация рта
             pacman.mouthAngle += pacman.mouthSpeed;
             if (pacman.mouthAngle > 0.8 || pacman.mouthAngle < 0.2) {
                 pacman.mouthSpeed = -pacman.mouthSpeed;
             }
             
-            // След
-            pacman.trail.push({ x: pacman.x, y: pacman.y });
-            if (pacman.trail.length > 10) {
-                pacman.trail.shift();
-            }
-            
-            // Неуязвимость
-            if (pacman.invincible) {
-                pacman.invincibleTimer--;
-                if (pacman.invincibleTimer <= 0) {
-                    pacman.invincible = false;
-                }
-            }
-            
-            // Сбор точек
-            dots.forEach(dot => {
-                if (!dot.collected) {
-                    const dx = pacman.x - dot.x;
-                    const dy = pacman.y - dot.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < pacman.radius + dot.radius) {
-                        dot.collected = true;
-                        game.score += 10;
-                        game.dotsCollected++;
-                        
-                        for (let i = 0; i < 3; i++) {
-                            particles.push(new Particle(dot.x, dot.y, dot.color));
-                        }
-                    }
-                }
-            });
-            
-            // Сбор энерджайзеров
-            energizers.forEach(energizer => {
-                if (!energizer.collected) {
-                    const dx = pacman.x - energizer.x;
-                    const dy = pacman.y - energizer.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < pacman.radius + energizer.radius) {
-                        energizer.collected = true;
-                        game.score += 50;
-                        game.powerMode = true;
-                        game.powerTimer = 200;
-                        
-                        ghosts.forEach(ghost => {
-                            ghost.scared = true;
-                            ghost.scaredTimer = 200;
-                        });
-                        
-                        for (let i = 0; i < 10; i++) {
-                            particles.push(new Particle(energizer.x, energizer.y, energizer.color));
-                        }
-                        
-                        showMessage("СИЛА!", energizer.x, energizer.y);
-                    }
-                }
-            });
-            
-            // Портал
-            portals.forEach(portal => {
-                const dx = pacman.x - portal.x;
-                const dy = pacman.y - portal.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < pacman.radius + portal.radius && portal.linkedTo) {
-                    pacman.x = portal.linkedTo.x;
-                    pacman.y = portal.linkedTo.y;
-                    showMessage("ТЕЛЕПОРТ", portal.x, portal.y);
-                }
-            });
-            
-            // Усиления
-            powerUps.forEach(powerUp => {
-                if (!powerUp.collected) {
-                    const dx = pacman.x - powerUp.x;
-                    const dy = pacman.y - powerUp.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < pacman.radius + powerUp.radius) {
-                        powerUp.collected = true;
-                        applyPowerUp(powerUp);
-                    }
-                }
-            });
-            
-            // Режим силы
-            if (game.powerMode) {
-                game.powerTimer--;
-                if (game.powerTimer <= 0) {
-                    game.powerMode = false;
-                }
-            }
-            
-            // Камера
-            game.cameraX = pacman.x - canvas.width / 2;
-            game.cameraY = pacman.y - canvas.height / 2;
-            
-            game.cameraX = Math.max(0, Math.min(game.cameraX, GRID_WIDTH - canvas.width));
-            game.cameraY = Math.max(0, Math.min(game.cameraY, GRID_HEIGHT - canvas.height));
-            
-            // Сложность
-            game.insanity = Math.min(100, game.insanity + 0.005);
-        }
-
-        function updateGhosts() {
-            ghosts.forEach(ghost => {
-                // Поведение
-                let targetX = ghost.x;
-                let targetY = ghost.y;
-                
-                if (ghost.scared) {
-                    ghost.scaredTimer--;
-                    if (ghost.scaredTimer <= 0) {
-                        ghost.scared = false;
-                    }
-                    // Испуганные призраки убегают
-                    const dx = pacman.x - ghost.x;
-                    const dy = pacman.y - ghost.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance > 0) {
-                        ghost.direction.x = (-dx / distance) * ghost.speed;
-                        ghost.direction.y = (-dy / distance) * ghost.speed;
-                    }
-                } else {
-                    switch(ghost.behavior) {
-                        case 'chase':
-                            targetX = pacman.x;
-                            targetY = pacman.y;
-                            break;
-                        case 'scatter':
-                            targetX = 0;
-                            targetY = 0;
-                            break;
-                        case 'random':
-                            if (Math.random() > 0.98) {
-                                targetX = Math.random() * GRID_WIDTH;
-                                targetY = Math.random() * GRID_HEIGHT;
-                            }
-                            break;
-                    }
-                    
-                    // Движение к цели
-                    const dx = targetX - ghost.x;
-                    const dy = targetY - ghost.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance > 0) {
-                        ghost.direction.x = (dx / distance) * ghost.speed;
-                        ghost.direction.y = (dy / distance) * ghost.speed;
-                    }
-                }
-                
-                // Обновление позиции с проверкой стен
-                let newX = ghost.x + ghost.direction.x;
-                let newY = ghost.y + ghost.direction.y;
-                
-                const gridX = Math.floor(newX / CELL_SIZE);
-                const gridY = Math.floor(newY / CELL_SIZE);
-                
-                if (gridX >= 0 && gridX < MAP_SIZE && gridY >= 0 && gridY < MAP_SIZE) {
-                    if (game.map[gridY][gridX] === 0) {
-                        ghost.x = newX;
-                        ghost.y = newY;
-                    } else {
-                        // Изменение направления при столкновении со стеной
-                        ghost.direction.x = Math.random() * 2 - 1;
-                        ghost.direction.y = Math.random() * 2 - 1;
-                    }
-                }
-                
-                // Столкновение с Пакманом
-                const distToPacman = Math.sqrt(
-                    Math.pow(ghost.x - pacman.x, 2) + 
-                    Math.pow(ghost.y - pacman.y, 2)
-                );
-                
-                if (distToPacman < pacman.radius + ghost.radius) {
-                    if (game.powerMode || pacman.invincible) {
-                        game.score += 200;
-                        ghost.x = Math.random() * GRID_WIDTH;
-                        ghost.y = Math.random() * GRID_HEIGHT;
-                        showMessage("+200", ghost.x, ghost.y);
-                    } else {
-                        takeDamage();
-                        ghost.x = Math.random() * GRID_WIDTH;
-                        ghost.y = Math.random() * GRID_HEIGHT;
-                    }
-                }
-            });
-        }
-
-        function updateParticles() {
-            particles = particles.filter(particle => particle.update());
-        }
-
-        function updateMessages() {
-            messages = messages.filter(msg => {
-                msg.y -= 2;
-                msg.life--;
-                return msg.life > 0;
-            });
-        }
-
-        function takeDamage() {
-            if (pacman.invincible) return;
-            
-            game.lives--;
-            game.rage = Math.min(100, game.rage + 15);
-            rageFill.style.width = `${game.rage}%`;
-            
-            for (let i = 0; i < 10; i++) {
-                particles.push(new Particle(pacman.x, pacman.y, '#ff0000'));
-            }
-            
-            pacman.invincible = true;
-            pacman.invincibleTimer = 60;
-            
-            showMessage("ПОРАЖЕНИЕ", pacman.x, pacman.y);
-            
-            if (game.lives <= 0) {
-                endGame();
-            }
-            
-            updateLivesDisplay();
-        }
-
-        function applyPowerUp(powerUp) {
-            game.score += 100;
-            
-            switch(powerUp.type) {
-                case 'speed':
-                    pacman.speed *= 1.5;
-                    setTimeout(() => pacman.speed /= 1.5, powerUp.duration);
-                    showMessage("СКОРОСТЬ", powerUp.x, powerUp.y);
-                    break;
-                    
-                case 'invincible':
-                    pacman.invincible = true;
-                    pacman.invincibleTimer = powerUp.duration;
-                    showMessage("ЗАЩИТА", powerUp.x, powerUp.y);
-                    break;
-            }
-            
-            for (let i = 0; i < 8; i++) {
-                particles.push(new Particle(powerUp.x, powerUp.y, powerUp.color));
-            }
-        }
-
-        function showMessage(text, x, y) {
-            messages.push({
-                text: text,
-                x: x,
-                y: y,
-                life: 60
-            });
-        }
-
-        function updateLivesDisplay() {
-            livesElement.textContent = `Жизни: ${game.lives}`;
-        }
-
-        function updateUI() {
-            scoreElement.textContent = `Счет: ${game.score}`;
-            levelElement.textContent = `Уровень: ${game.level}`;
-            insanityLevel.textContent = `Сложность: ${Math.floor(game.insanity)}%`;
-            
-            // Проверка на завершение уровня
-            const collectedDots = dots.filter(dot => dot.collected).length;
-            if (collectedDots >= game.totalDots * 0.7 && game.totalDots > 0) {
-                game.level++;
-                game.dotsCollected = 0;
-                initMap();
-                showMessage(`УРОВЕНЬ ${game.level}`, pacman.x, pacman.y);
-            }
-            
-            if (game.rage >= 100) {
-                endGame();
-            }
-        }
-
-        function drawMap() {
-            // Очищаем canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Стены
-            for (let y = 0; y < MAP_SIZE; y++) {
-                for (let x = 0; x < MAP_SIZE; x++) {
-                    const screenX = x * CELL_SIZE - game.cameraX;
-                    const screenY = y * CELL_SIZE - game.cameraY;
-                    
-                    // Рисуем только видимые клетки
-                    if (screenX + CELL_SIZE > 0 && screenX < canvas.width &&
-                        screenY + CELL_SIZE > 0 && screenY < canvas.height) {
-                        
-                        if (game.map[y][x] === 1) {
-                            ctx.fillStyle = '#1a75ff';
-                            ctx.fillRect(screenX, screenY, CELL_SIZE, CELL_SIZE);
-                            
-                            ctx.strokeStyle = '#0052cc';
-                            ctx.lineWidth = 1;
-                            ctx.strokeRect(screenX, screenY, CELL_SIZE, CELL_SIZE);
-                        } else {
-                            // Пол
-                            ctx.fillStyle = '#111';
-                            ctx.fillRect(screenX, screenY, CELL_SIZE, CELL_SIZE);
-                        }
-                    }
-                }
-            }
-            
-            // Точки
-            dots.forEach(dot => {
-                if (!dot.collected) {
-                    const screenX = dot.x - game.cameraX;
-                    const screenY = dot.y - game.cameraY;
-                    
-                    // Проверяем видимость
-                    if (screenX + dot.radius > 0 && screenX - dot.radius < canvas.width &&
-                        screenY + dot.radius > 0 && screenY - dot.radius < canvas.height) {
-                        
-                        ctx.fillStyle = dot.color;
-                        ctx.beginPath();
-                        ctx.arc(screenX, screenY, dot.radius, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-            });
-            
-            // Энерджайзеры
-            energizers.forEach(energizer => {
-                if (!energizer.collected) {
-                    const screenX = energizer.x - game.cameraX;
-                    const screenY = energizer.y - game.cameraY;
-                    
-                    if (screenX + energizer.radius > 0 && screenX - energizer.radius < canvas.width &&
-                        screenY + energizer.radius > 0 && screenY - energizer.radius < canvas.height) {
-                        
-                        ctx.fillStyle = energizer.color;
-                        ctx.beginPath();
-                        ctx.arc(screenX, screenY, energizer.radius, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Мерцание
-                        if (Math.sin(Date.now() / 200) > 0) {
-                            ctx.shadowColor = energizer.color;
-                            ctx.shadowBlur = 10;
-                            ctx.beginPath();
-                            ctx.arc(screenX, screenY, energizer.radius, 0, Math.PI * 2);
-                            ctx.fill();
-                            ctx.shadowBlur = 0;
-                        }
-                    }
-                }
-            });
-            
-            // Порталы
-            portals.forEach(portal => {
-                const screenX = portal.x - game.cameraX;
-                const screenY = portal.y - game.cameraY;
-                
-                if (screenX + portal.radius > 0 && screenX - portal.radius < canvas.width &&
-                    screenY + portal.radius > 0 && screenY - portal.radius < canvas.height) {
-                    
-                    ctx.strokeStyle = portal.color;
-                    ctx.lineWidth = 3;
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, portal.radius, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-            });
-        }
-
-        function drawPacman() {
-            const screenX = pacman.x - game.cameraX;
-            const screenY = pacman.y - game.cameraY;
-            
-            // След
-            if (pacman.trail.length > 1) {
-                ctx.strokeStyle = 'rgba(255, 255, 0, 0.2)';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                pacman.trail.forEach((point, i) => {
-                    const trailX = point.x - game.cameraX;
-                    const trailY = point.y - game.cameraY;
-                    if (i === 0) ctx.moveTo(trailX, trailY);
-                    else ctx.lineTo(trailX, trailY);
-                });
-                ctx.stroke();
-            }
-            
-            // Тело Пакмана
             ctx.save();
-            ctx.translate(screenX, screenY);
+            ctx.translate(pacman.x, pacman.y);
             
-            if (pacman.invincible && Math.floor(Date.now() / 100) % 2 === 0) {
-                ctx.globalAlpha = 0.5;
-            }
+            // Поворот в зависимости от направления
+            let rotation = 0;
+            if (pacman.direction.x === 1) rotation = 0;
+            else if (pacman.direction.x === -1) rotation = Math.PI;
+            else if (pacman.direction.y === -1) rotation = -Math.PI/2;
+            else if (pacman.direction.y === 1) rotation = Math.PI/2;
+            ctx.rotate(rotation);
             
-            ctx.fillStyle = pacman.color;
+            // Тело
+            ctx.fillStyle = '#ff0';
             ctx.beginPath();
             ctx.moveTo(0, 0);
             ctx.arc(0, 0, pacman.radius, pacman.mouthAngle, Math.PI * 2 - pacman.mouthAngle);
@@ -1050,7 +385,7 @@
             // Глаз
             ctx.fillStyle = '#000';
             ctx.beginPath();
-            ctx.arc(pacman.radius * 0.4, -pacman.radius * 0.4, pacman.radius * 0.2, 0, Math.PI * 2);
+            ctx.arc(pacman.radius * 0.3, -pacman.radius * 0.3, pacman.radius * 0.15, 0, Math.PI * 2);
             ctx.fill();
             
             ctx.restore();
@@ -1058,325 +393,327 @@
 
         function drawGhosts() {
             ghosts.forEach(ghost => {
-                const screenX = ghost.x - game.cameraX;
-                const screenY = ghost.y - game.cameraY;
+                ctx.save();
+                ctx.translate(ghost.x, ghost.y);
                 
-                // Проверяем видимость
-                if (screenX + ghost.radius > 0 && screenX - ghost.radius < canvas.width &&
-                    screenY + ghost.radius > 0 && screenY - ghost.radius < canvas.height) {
-                    
-                    ctx.save();
-                    ctx.translate(screenX, screenY);
-                    
-                    // Тело
-                    ctx.fillStyle = ghost.scared ? '#0000ff' : ghost.color;
-                    ctx.beginPath();
-                    ctx.arc(0, 0, ghost.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Глаза
-                    ctx.fillStyle = '#fff';
-                    ctx.beginPath();
-                    ctx.arc(-ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.25, 0, Math.PI * 2);
-                    ctx.arc(ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.25, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Зрачки
-                    ctx.fillStyle = '#0000ff';
-                    const lookX = pacman.x - ghost.x;
-                    const lookY = pacman.y - ghost.y;
-                    const angle = Math.atan2(lookY, lookX);
-                    ctx.beginPath();
-                    ctx.arc(
-                        -ghost.radius * 0.3 + Math.cos(angle) * 4,
-                        -ghost.radius * 0.3 + Math.sin(angle) * 4,
-                        ghost.radius * 0.12,
-                        0,
-                        Math.PI * 2
-                    );
-                    ctx.arc(
-                        ghost.radius * 0.3 + Math.cos(angle) * 4,
-                        -ghost.radius * 0.3 + Math.sin(angle) * 4,
-                        ghost.radius * 0.12,
-                        0,
-                        Math.PI * 2
-                    );
-                    ctx.fill();
-                    
-                    ctx.restore();
-                }
-            });
-        }
-
-        function drawPowerUps() {
-            powerUps.forEach(powerUp => {
-                if (!powerUp.collected) {
-                    const screenX = powerUp.x - game.cameraX;
-                    const screenY = powerUp.y - game.cameraY;
-                    
-                    if (screenX + powerUp.radius > 0 && screenX - powerUp.radius < canvas.width &&
-                        screenY + powerUp.radius > 0 && screenY - powerUp.radius < canvas.height) {
-                        
-                        ctx.fillStyle = powerUp.color;
-                        ctx.beginPath();
-                        ctx.arc(screenX, screenY, powerUp.radius, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Вращение
-                        ctx.save();
-                        ctx.translate(screenX, screenY);
-                        ctx.rotate(Date.now() / 1000);
-                        ctx.strokeStyle = '#fff';
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        for (let i = 0; i < 4; i++) {
-                            const angle = (i / 4) * Math.PI * 2;
-                            const x = Math.cos(angle) * powerUp.radius;
-                            const y = Math.sin(angle) * powerUp.radius;
-                            ctx.moveTo(0, 0);
-                            ctx.lineTo(x, y);
-                        }
-                        ctx.stroke();
-                        ctx.restore();
-                    }
-                }
-            });
-        }
-
-        function drawParticles() {
-            particles.forEach(particle => {
-                const screenX = particle.x - game.cameraX;
-                const screenY = particle.y - game.cameraY;
+                // Тело
+                ctx.fillStyle = ghost.scared ? '#00f' : ghost.color;
+                ctx.beginPath();
+                ctx.arc(0, 0, pacman.radius, 0, Math.PI * 2);
+                ctx.fill();
                 
-                if (screenX + particle.size > 0 && screenX - particle.size < canvas.width &&
-                    screenY + particle.size > 0 && screenY - particle.size < canvas.height) {
-                    particle.draw();
-                }
-            });
-        }
-
-        function drawMessages() {
-            messages.forEach(msg => {
-                const screenX = msg.x - game.cameraX;
-                const screenY = msg.y - game.cameraY;
+                // Глаза
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(-pacman.radius * 0.3, -pacman.radius * 0.2, pacman.radius * 0.2, 0, Math.PI * 2);
+                ctx.arc(pacman.radius * 0.3, -pacman.radius * 0.2, pacman.radius * 0.2, 0, Math.PI * 2);
+                ctx.fill();
                 
-                if (screenY > -50 && screenY < canvas.height + 50) {
-                    ctx.fillStyle = '#ffff00';
-                    ctx.font = '16px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(msg.text, screenX, screenY);
-                }
+                // Зрачки
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(-pacman.radius * 0.3, -pacman.radius * 0.2, pacman.radius * 0.1, 0, Math.PI * 2);
+                ctx.arc(pacman.radius * 0.3, -pacman.radius * 0.2, pacman.radius * 0.1, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.restore();
             });
         }
 
-        function drawMapIndicator() {
-            mapCtx.clearRect(0, 0, 150, 150);
+        // Обновление игры
+        function updatePacman() {
+            // Пытаемся изменить направление
+            const gridX = Math.floor(pacman.x / CELL_SIZE);
+            const gridY = Math.floor(pacman.y / CELL_SIZE);
             
-            // Фон
-            mapCtx.fillStyle = '#000';
-            mapCtx.fillRect(0, 0, 150, 150);
-            
-            // Границы
-            mapCtx.strokeStyle = '#00ffff';
-            mapCtx.lineWidth = 2;
-            mapCtx.strokeRect(0, 0, 150, 150);
-            
-            // Масштаб
-            const scaleX = 150 / GRID_WIDTH;
-            const scaleY = 150 / GRID_HEIGHT;
-            
-            // Стены
-            for (let y = 0; y < MAP_SIZE; y++) {
-                for (let x = 0; x < MAP_SIZE; x++) {
-                    if (game.map[y][x] === 1) {
-                        mapCtx.fillStyle = '#1a75ff';
-                        mapCtx.fillRect(
-                            x * CELL_SIZE * scaleX,
-                            y * CELL_SIZE * scaleY,
-                            CELL_SIZE * scaleX,
-                            CELL_SIZE * scaleY
-                        );
-                    }
+            // Проверяем, можно ли повернуть в желаемом направлении
+            if (pacman.nextDirection.x !== 0 || pacman.nextDirection.y !== 0) {
+                const nextGridX = gridX + pacman.nextDirection.x;
+                const nextGridY = gridY + pacman.nextDirection.y;
+                
+                if (nextGridX >= 0 && nextGridX < GRID_SIZE && 
+                    nextGridY >= 0 && nextGridY < maze.length &&
+                    maze[nextGridY][nextGridX] !== 1) {
+                    pacman.direction = { ...pacman.nextDirection };
                 }
             }
             
-            // Пакман
-            const pacmanX = pacman.x * scaleX;
-            const pacmanY = pacman.y * scaleY;
+            // Движение
+            const newX = pacman.x + pacman.direction.x * PACMAN_SPEED;
+            const newY = pacman.y + pacman.direction.y * PACMAN_SPEED;
             
-            mapCtx.fillStyle = '#ffff00';
-            mapCtx.beginPath();
-            mapCtx.arc(pacmanX, pacmanY, 3, 0, Math.PI * 2);
-            mapCtx.fill();
+            // Проверка стен
+            const newGridX = Math.floor(newX / CELL_SIZE);
+            const newGridY = Math.floor(newY / CELL_SIZE);
             
-            // Призраки
+            if (newGridX >= 0 && newGridX < GRID_SIZE && 
+                newGridY >= 0 && newGridY < maze.length &&
+                maze[newGridY][newGridX] !== 1) {
+                pacman.x = newX;
+                pacman.y = newY;
+            }
+            
+            // Телепортация через туннели
+            if (pacman.x < 0) pacman.x = canvas.width;
+            if (pacman.x > canvas.width) pacman.x = 0;
+            
+            // Сбор точек
+            const centerGridX = Math.floor((pacman.x + CELL_SIZE/2) / CELL_SIZE);
+            const centerGridY = Math.floor((pacman.y + CELL_SIZE/2) / CELL_SIZE);
+            
+            if (centerGridX >= 0 && centerGridX < GRID_SIZE && 
+                centerGridY >= 0 && centerGridY < maze.length) {
+                
+                if (maze[centerGridY][centerGridX] === 2) {
+                    maze[centerGridY][centerGridX] = 0;
+                    game.score += 10;
+                    game.dotsLeft--;
+                } else if (maze[centerGridY][centerGridX] === 3) {
+                    maze[centerGridY][centerGridX] = 0;
+                    game.score += 50;
+                    game.dotsLeft--;
+                    game.powerMode = true;
+                    game.powerTimer = 300;
+                    
+                    // Делаем всех призраков испуганными
+                    ghosts.forEach(ghost => ghost.scared = true);
+                }
+            }
+        }
+
+        function updateGhosts() {
             ghosts.forEach(ghost => {
-                mapCtx.fillStyle = ghost.scared ? '#0000ff' : ghost.color;
-                mapCtx.beginPath();
-                mapCtx.arc(ghost.x * scaleX, ghost.y * scaleY, 2, 0, Math.PI * 2);
-                mapCtx.fill();
+                // Обновление режима испуга
+                if (game.powerMode) {
+                    if (ghost.scared && game.powerTimer <= 0) {
+                        ghost.scared = false;
+                    }
+                }
+                
+                // Простое движение призраков
+                const newX = ghost.x + ghost.direction.x * GHOST_SPEED;
+                const newY = ghost.y + ghost.direction.y * GHOST_SPEED;
+                
+                const gridX = Math.floor(newX / CELL_SIZE);
+                const gridY = Math.floor(newY / CELL_SIZE);
+                
+                // Проверяем, можно ли двигаться дальше
+                if (gridX >= 0 && gridX < GRID_SIZE && 
+                    gridY >= 0 && gridY < maze.length &&
+                    maze[gridY][gridX] !== 1) {
+                    ghost.x = newX;
+                    ghost.y = newY;
+                } else {
+                    // Меняем направление при столкновении со стеной
+                    const directions = [
+                        { x: 1, y: 0 }, { x: -1, y: 0 },
+                        { x: 0, y: 1 }, { x: 0, y: -1 }
+                    ];
+                    
+                    // Исключаем обратное направление
+                    const validDirections = directions.filter(dir => 
+                        !(dir.x === -ghost.direction.x && dir.y === -ghost.direction.y)
+                    );
+                    
+                    // Выбираем случайное новое направление
+                    const newDir = validDirections[Math.floor(Math.random() * validDirections.length)];
+                    ghost.direction = newDir;
+                }
+                
+                // Телепортация через туннели
+                if (ghost.x < 0) ghost.x = canvas.width;
+                if (ghost.x > canvas.width) ghost.x = 0;
+                
+                // Проверка столкновения с Пакманом
+                const dx = pacman.x - ghost.x;
+                const dy = pacman.y - ghost.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < pacman.radius * 2) {
+                    if (ghost.scared) {
+                        // Пакман съедает призрака
+                        ghost.x = CELL_SIZE * 9.5;
+                        ghost.y = CELL_SIZE * 8.5;
+                        ghost.scared = false;
+                        game.score += 200;
+                    } else {
+                        // Призрак съедает Пакмана
+                        game.lives--;
+                        resetPositions();
+                        
+                        if (game.lives <= 0) {
+                            gameOver();
+                        }
+                    }
+                }
             });
+        }
+
+        function resetPositions() {
+            pacman.x = CELL_SIZE * 9.5;
+            pacman.y = CELL_SIZE * 10.5;
+            pacman.direction = { x: 0, y: 0 };
+            pacman.nextDirection = { x: 0, y: 0 };
+            
+            ghosts[0] = { x: CELL_SIZE * 9.5, y: CELL_SIZE * 8.5, color: '#f00', direction: { x: 1, y: 0 }, scared: false };
+            ghosts[1] = { x: CELL_SIZE * 8.5, y: CELL_SIZE * 9.5, color: '#f0f', direction: { x: -1, y: 0 }, scared: false };
+            ghosts[2] = { x: CELL_SIZE * 9.5, y: CELL_SIZE * 10.5, color: '#0ff', direction: { x: 0, y: 1 }, scared: false };
+            ghosts[3] = { x: CELL_SIZE * 10.5, y: CELL_SIZE * 9.5, color: '#ff0', direction: { x: 0, y: -1 }, scared: false };
+        }
+
+        function updateUI() {
+            scoreElement.textContent = game.score;
+            livesElement.textContent = game.lives;
+            levelElement.textContent = game.level;
+            
+            // Таймер режима силы
+            if (game.powerMode) {
+                game.powerTimer--;
+                if (game.powerTimer <= 0) {
+                    game.powerMode = false;
+                    ghosts.forEach(ghost => ghost.scared = false);
+                }
+            }
+            
+            // Проверка завершения уровня
+            if (game.dotsLeft <= 0) {
+                game.level++;
+                resetMaze();
+                resetPositions();
+                game.dotsLeft = countDots();
+            }
+        }
+
+        function resetMaze() {
+            maze = [
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+                [1,3,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,3,1],
+                [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+                [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+                [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1],
+                [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+                [1,1,1,1,2,1,1,1,0,1,0,1,1,1,2,1,1,1,1],
+                [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
+                [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+                [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
+                [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+                [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
+                [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
+                [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
+                [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
+                [1,3,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,3,1],
+                [1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1],
+                [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
+                [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
+                [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+            ];
         }
 
         function gameLoop() {
-            if (game.running && !game.gameOver) {
-                updatePacman();
-                updateGhosts();
-                updateParticles();
-                updateMessages();
-                updateUI();
-                
-                drawMap();
-                drawPacman();
-                drawGhosts();
-                drawPowerUps();
-                drawParticles();
-                drawMessages();
-                drawMapIndicator();
-            }
+            if (!game.running) return;
+            
+            updatePacman();
+            updateGhosts();
+            updateUI();
+            
+            drawMaze();
+            drawPacman();
+            drawGhosts();
             
             requestAnimationFrame(gameLoop);
         }
 
         function startGame() {
-            console.log("Начало игры!");
+            console.log("Игра начинается!");
+            
+            // Сброс игры
             game.running = true;
-            game.gameOver = false;
             game.score = 0;
             game.lives = 3;
             game.level = 1;
-            game.rage = 0;
-            game.insanity = 0;
             game.powerMode = false;
-            game.dotsCollected = 0;
+            game.powerTimer = 0;
             
-            pacman.x = 12 * CELL_SIZE + CELL_SIZE / 2;
-            pacman.y = 12 * CELL_SIZE + CELL_SIZE / 2;
-            pacman.direction.x = 0;
-            pacman.direction.y = 0;
-            pacman.trail = [];
-            pacman.invincible = false;
+            resetMaze();
+            resetPositions();
+            game.dotsLeft = countDots();
             
-            initMap();
-            updateLivesDisplay();
+            // Переключение экранов
             startScreen.style.display = 'none';
             gameOverScreen.style.display = 'none';
-            rageFill.style.width = '0%';
+            gameScreen.style.display = 'block';
             
-            // Обновляем UI
-            scoreElement.textContent = `Счет: 0`;
-            levelElement.textContent = `Уровень: 1`;
-            insanityLevel.textContent = `Сложность: 0%`;
+            // Запуск игрового цикла
+            gameLoop();
         }
 
-        function endGame() {
+        function gameOver() {
             game.running = false;
-            game.gameOver = true;
-            
             finalScoreElement.textContent = game.score;
-            gameOverScreen.style.display = 'block';
+            gameScreen.style.display = 'none';
+            gameOverScreen.style.display = 'flex';
+        }
+
+        function returnToMenu() {
+            game.running = false;
+            gameOverScreen.style.display = 'none';
+            startScreen.style.display = 'flex';
         }
 
         // Обработчики событий
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
+        menuBtn.addEventListener('click', returnToMenu);
 
         // Управление
-        const setDirection = (dx, dy) => {
-            pacman.direction.x = dx;
-            pacman.direction.y = dy;
-        };
+        function setDirection(dx, dy) {
+            pacman.nextDirection = { x: dx, y: dy };
+        }
 
         upBtn.addEventListener('click', () => setDirection(0, -1));
         downBtn.addEventListener('click', () => setDirection(0, 1));
         leftBtn.addEventListener('click', () => setDirection(-1, 0));
         rightBtn.addEventListener('click', () => setDirection(1, 0));
 
-        powerBtn.addEventListener('click', () => {
-            if (game.running && !game.powerMode) {
-                game.powerMode = true;
-                game.powerTimer = 100;
-                showMessage("БУСТ", pacman.x, pacman.y);
-            }
-        });
-
-        // Клавиатура
+        // Управление с клавиатуры
         document.addEventListener('keydown', (e) => {
             if (!game.running) return;
             
-            switch(e.code) {
+            switch(e.key) {
                 case 'ArrowUp':
-                case 'KeyW':
+                case 'w':
+                case 'W':
                     e.preventDefault();
                     setDirection(0, -1);
                     break;
                     
                 case 'ArrowDown':
-                case 'KeyS':
+                case 's':
+                case 'S':
                     e.preventDefault();
                     setDirection(0, 1);
                     break;
                     
                 case 'ArrowLeft':
-                case 'KeyA':
+                case 'a':
+                case 'A':
                     e.preventDefault();
                     setDirection(-1, 0);
                     break;
                     
                 case 'ArrowRight':
-                case 'KeyD':
+                case 'd':
+                case 'D':
                     e.preventDefault();
                     setDirection(1, 0);
                     break;
-                    
-                case 'Space':
-                    e.preventDefault();
-                    powerBtn.click();
-                    break;
             }
         });
 
-        // Свайпы
-        let touchStartX = 0;
-        let touchStartY = 0;
-        
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        });
-
-        canvas.addEventListener('touchend', (e) => {
-            if (!game.running) return;
-            
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
-            
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                if (deltaX > 30) setDirection(1, 0);
-                else if (deltaX < -30) setDirection(-1, 0);
-            } else {
-                if (deltaY > 30) setDirection(0, 1);
-                else if (deltaY < -30) setDirection(0, -1);
-            }
-        });
-
-        // Адаптация размера
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        // Запуск игры
-        console.log("Игра загружена!");
-        gameLoop();
-        
-        // Показываем начальный экран
-        startScreen.style.display = 'flex';
+        // Инициализация
+        console.log("Игра загружена. Нажмите 'НАЧАТЬ ИГРУ' для начала.");
     </script>
 </body>
 </html>
