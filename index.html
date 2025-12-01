@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pac-Man: Dark Dimension</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
@@ -333,7 +332,7 @@
         
         <div id="mapIndicator"></div>
         
-        <div id="insanityLevel">Безумие: 0%</div>
+        <div id="insanityLevel">Сложность: 0%</div>
         
         <div id="gameOver">
             <h1>Игра окончена</h1>
@@ -379,12 +378,6 @@
     </div>
 
     <script>
-        // Инициализация Telegram
-        if (typeof Telegram !== 'undefined') {
-            Telegram.WebApp.ready();
-            Telegram.WebApp.expand();
-        }
-
         // Получаем элементы
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
@@ -413,7 +406,7 @@
         mapIndicator.height = 150;
 
         // Размеры лабиринта
-        const MAP_SIZE = 30;
+        const MAP_SIZE = 25;
         const CELL_SIZE = 40;
         const GRID_WIDTH = MAP_SIZE * CELL_SIZE;
         const GRID_HEIGHT = MAP_SIZE * CELL_SIZE;
@@ -438,8 +431,8 @@
 
         // Пакман
         const pacman = {
-            x: 15 * CELL_SIZE + CELL_SIZE / 2,
-            y: 15 * CELL_SIZE + CELL_SIZE / 2,
+            x: 12 * CELL_SIZE + CELL_SIZE / 2,
+            y: 12 * CELL_SIZE + CELL_SIZE / 2,
             radius: 15,
             speed: 4,
             direction: { x: 0, y: 0 },
@@ -466,6 +459,8 @@
             dots = [];
             energizers = [];
             portals = [];
+            ghosts = [];
+            powerUps = [];
             
             // Создаем лабиринт
             for (let y = 0; y < MAP_SIZE; y++) {
@@ -473,7 +468,7 @@
                 for (let x = 0; x < MAP_SIZE; x++) {
                     // Создаем стены по краям и внутри
                     const isWall = x === 0 || y === 0 || x === MAP_SIZE - 1 || y === MAP_SIZE - 1 || 
-                                  (x % 3 === 0 && y % 3 === 0 && Math.random() > 0.3);
+                                  (x % 3 === 0 && y % 3 === 0 && Math.random() > 0.4);
                     game.map[y][x] = isWall ? 1 : 0;
                     
                     // Точки в проходимых клетках
@@ -486,22 +481,26 @@
                             collected: false
                         });
                     }
-                    
-                    // Энерджайзеры
-                    if (!isWall && Math.random() > 0.98) {
-                        energizers.push({
-                            x: x * CELL_SIZE + CELL_SIZE / 2,
-                            y: y * CELL_SIZE + CELL_SIZE / 2,
-                            radius: 8,
-                            color: '#00ffff',
-                            collected: false
-                        });
-                    }
                 }
             }
             
-            // Добавляем несколько порталов
+            // Добавляем энерджайзеры
             for (let i = 0; i < 4; i++) {
+                const x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                const y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                if (game.map[y][x] === 0) {
+                    energizers.push({
+                        x: x * CELL_SIZE + CELL_SIZE / 2,
+                        y: y * CELL_SIZE + CELL_SIZE / 2,
+                        radius: 8,
+                        color: '#00ffff',
+                        collected: false
+                    });
+                }
+            }
+            
+            // Добавляем порталы
+            for (let i = 0; i < 3; i++) {
                 const x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
                 const y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
                 if (game.map[y][x] === 0) {
@@ -532,54 +531,53 @@
 
         // Создание призраков
         function createGhosts() {
-            ghosts = [];
             const ghostColors = ['#ff0000', '#ff69b4', '#00ffff', '#ffa500'];
             
-            for (let i = 0; i < 4 + game.level; i++) {
-                const x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                const y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+            for (let i = 0; i < 4; i++) {
+                let x, y;
+                do {
+                    x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                    y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                } while (game.map[y][x] !== 0);
                 
-                if (game.map[y][x] === 0) {
-                    ghosts.push({
-                        x: x * CELL_SIZE + CELL_SIZE / 2,
-                        y: y * CELL_SIZE + CELL_SIZE / 2,
-                        radius: 14,
-                        color: ghostColors[i % ghostColors.length],
-                        speed: 2 + Math.random(),
-                        direction: { x: 0, y: 0 },
-                        behavior: ['chase', 'scatter', 'random'][Math.floor(Math.random() * 3)],
-                        scared: false,
-                        scaredTimer: 0
-                    });
-                }
+                ghosts.push({
+                    x: x * CELL_SIZE + CELL_SIZE / 2,
+                    y: y * CELL_SIZE + CELL_SIZE / 2,
+                    radius: 14,
+                    color: ghostColors[i],
+                    speed: 2 + Math.random(),
+                    direction: { x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 },
+                    behavior: ['chase', 'scatter', 'random'][i % 3],
+                    scared: false,
+                    scaredTimer: 0
+                });
             }
         }
 
         // Создание усилений
         function createPowerUps() {
-            powerUps = [];
             const powerTypes = [
                 { type: 'speed', color: '#00ff00', duration: 300 },
-                { type: 'invincible', color: '#ffff00', duration: 200 },
-                { type: 'magnet', color: '#ff0000', duration: 400 }
+                { type: 'invincible', color: '#ffff00', duration: 200 }
             ];
             
-            for (let i = 0; i < 3; i++) {
-                const x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
-                const y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+            for (let i = 0; i < 2; i++) {
+                let x, y;
+                do {
+                    x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                    y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                } while (game.map[y][x] !== 0);
                 
-                if (game.map[y][x] === 0) {
-                    const power = powerTypes[Math.floor(Math.random() * powerTypes.length)];
-                    powerUps.push({
-                        x: x * CELL_SIZE + CELL_SIZE / 2,
-                        y: y * CELL_SIZE + CELL_SIZE / 2,
-                        radius: 10,
-                        color: power.color,
-                        type: power.type,
-                        duration: power.duration,
-                        collected: false
-                    });
-                }
+                const power = powerTypes[Math.floor(Math.random() * powerTypes.length)];
+                powerUps.push({
+                    x: x * CELL_SIZE + CELL_SIZE / 2,
+                    y: y * CELL_SIZE + CELL_SIZE / 2,
+                    radius: 10,
+                    color: power.color,
+                    type: power.type,
+                    duration: power.duration,
+                    collected: false
+                });
             }
         }
 
@@ -744,46 +742,56 @@
             game.cameraX = Math.max(0, Math.min(game.cameraX, GRID_WIDTH - canvas.width));
             game.cameraY = Math.max(0, Math.min(game.cameraY, GRID_HEIGHT - canvas.height));
             
-            // Безумие
+            // Сложность
             game.insanity = Math.min(100, game.insanity + 0.005);
         }
 
         function updateGhosts() {
             ghosts.forEach(ghost => {
                 // Поведение
-                let targetX, targetY;
+                let targetX = ghost.x;
+                let targetY = ghost.y;
                 
-                switch(ghost.behavior) {
-                    case 'chase':
-                        targetX = pacman.x;
-                        targetY = pacman.y;
-                        break;
-                    case 'scatter':
-                        targetX = 0;
-                        targetY = 0;
-                        break;
-                    case 'random':
-                        if (Math.random() > 0.98) {
-                            targetX = Math.random() * GRID_WIDTH;
-                            targetY = Math.random() * GRID_HEIGHT;
-                        } else {
-                            targetX = ghost.targetX || ghost.x;
-                            targetY = ghost.targetY || ghost.y;
-                        }
-                        break;
-                }
-                
-                ghost.targetX = targetX;
-                ghost.targetY = targetY;
-                
-                // Движение
-                let dx = targetX - ghost.x;
-                let dy = targetY - ghost.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance > 0) {
-                    ghost.direction.x = (dx / distance) * ghost.speed;
-                    ghost.direction.y = (dy / distance) * ghost.speed;
+                if (ghost.scared) {
+                    ghost.scaredTimer--;
+                    if (ghost.scaredTimer <= 0) {
+                        ghost.scared = false;
+                    }
+                    // Испуганные призраки убегают
+                    const dx = pacman.x - ghost.x;
+                    const dy = pacman.y - ghost.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance > 0) {
+                        ghost.direction.x = (-dx / distance) * ghost.speed;
+                        ghost.direction.y = (-dy / distance) * ghost.speed;
+                    }
+                } else {
+                    switch(ghost.behavior) {
+                        case 'chase':
+                            targetX = pacman.x;
+                            targetY = pacman.y;
+                            break;
+                        case 'scatter':
+                            targetX = 0;
+                            targetY = 0;
+                            break;
+                        case 'random':
+                            if (Math.random() > 0.98) {
+                                targetX = Math.random() * GRID_WIDTH;
+                                targetY = Math.random() * GRID_HEIGHT;
+                            }
+                            break;
+                    }
+                    
+                    // Движение к цели
+                    const dx = targetX - ghost.x;
+                    const dy = targetY - ghost.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance > 0) {
+                        ghost.direction.x = (dx / distance) * ghost.speed;
+                        ghost.direction.y = (dy / distance) * ghost.speed;
+                    }
                 }
                 
                 // Обновление позиции с проверкой стен
@@ -801,14 +809,6 @@
                         // Изменение направления при столкновении со стеной
                         ghost.direction.x = Math.random() * 2 - 1;
                         ghost.direction.y = Math.random() * 2 - 1;
-                    }
-                }
-                
-                // Страх
-                if (ghost.scared) {
-                    ghost.scaredTimer--;
-                    if (ghost.scaredTimer <= 0) {
-                        ghost.scared = false;
                     }
                 }
                 
@@ -883,11 +883,6 @@
                     pacman.invincibleTimer = powerUp.duration;
                     showMessage("ЗАЩИТА", powerUp.x, powerUp.y);
                     break;
-                    
-                case 'magnet':
-                    // Притягивает ближайшие точки
-                    showMessage("МАГНИТ", powerUp.x, powerUp.y);
-                    break;
             }
             
             for (let i = 0; i < 8; i++) {
@@ -913,7 +908,9 @@
             levelElement.textContent = `Уровень: ${game.level}`;
             insanityLevel.textContent = `Сложность: ${Math.floor(game.insanity)}%`;
             
-            if (game.dotsCollected >= game.totalDots * 0.8) {
+            // Проверка на завершение уровня
+            const collectedDots = dots.filter(dot => dot.collected).length;
+            if (collectedDots >= game.totalDots * 0.7 && game.totalDots > 0) {
                 game.level++;
                 game.dotsCollected = 0;
                 initMap();
@@ -926,12 +923,16 @@
         }
 
         function drawMap() {
+            // Очищаем canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
             // Стены
             for (let y = 0; y < MAP_SIZE; y++) {
                 for (let x = 0; x < MAP_SIZE; x++) {
                     const screenX = x * CELL_SIZE - game.cameraX;
                     const screenY = y * CELL_SIZE - game.cameraY;
                     
+                    // Рисуем только видимые клетки
                     if (screenX + CELL_SIZE > 0 && screenX < canvas.width &&
                         screenY + CELL_SIZE > 0 && screenY < canvas.height) {
                         
@@ -942,6 +943,10 @@
                             ctx.strokeStyle = '#0052cc';
                             ctx.lineWidth = 1;
                             ctx.strokeRect(screenX, screenY, CELL_SIZE, CELL_SIZE);
+                        } else {
+                            // Пол
+                            ctx.fillStyle = '#111';
+                            ctx.fillRect(screenX, screenY, CELL_SIZE, CELL_SIZE);
                         }
                     }
                 }
@@ -953,10 +958,15 @@
                     const screenX = dot.x - game.cameraX;
                     const screenY = dot.y - game.cameraY;
                     
-                    ctx.fillStyle = dot.color;
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, dot.radius, 0, Math.PI * 2);
-                    ctx.fill();
+                    // Проверяем видимость
+                    if (screenX + dot.radius > 0 && screenX - dot.radius < canvas.width &&
+                        screenY + dot.radius > 0 && screenY - dot.radius < canvas.height) {
+                        
+                        ctx.fillStyle = dot.color;
+                        ctx.beginPath();
+                        ctx.arc(screenX, screenY, dot.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                 }
             });
             
@@ -966,19 +976,23 @@
                     const screenX = energizer.x - game.cameraX;
                     const screenY = energizer.y - game.cameraY;
                     
-                    ctx.fillStyle = energizer.color;
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, energizer.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Мерцание
-                    if (Math.sin(Date.now() / 200) > 0) {
-                        ctx.shadowColor = energizer.color;
-                        ctx.shadowBlur = 10;
+                    if (screenX + energizer.radius > 0 && screenX - energizer.radius < canvas.width &&
+                        screenY + energizer.radius > 0 && screenY - energizer.radius < canvas.height) {
+                        
+                        ctx.fillStyle = energizer.color;
                         ctx.beginPath();
                         ctx.arc(screenX, screenY, energizer.radius, 0, Math.PI * 2);
                         ctx.fill();
-                        ctx.shadowBlur = 0;
+                        
+                        // Мерцание
+                        if (Math.sin(Date.now() / 200) > 0) {
+                            ctx.shadowColor = energizer.color;
+                            ctx.shadowBlur = 10;
+                            ctx.beginPath();
+                            ctx.arc(screenX, screenY, energizer.radius, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.shadowBlur = 0;
+                        }
                     }
                 }
             });
@@ -988,11 +1002,15 @@
                 const screenX = portal.x - game.cameraX;
                 const screenY = portal.y - game.cameraY;
                 
-                ctx.strokeStyle = portal.color;
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(screenX, screenY, portal.radius, 0, Math.PI * 2);
-                ctx.stroke();
+                if (screenX + portal.radius > 0 && screenX - portal.radius < canvas.width &&
+                    screenY + portal.radius > 0 && screenY - portal.radius < canvas.height) {
+                    
+                    ctx.strokeStyle = portal.color;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, portal.radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
             });
         }
 
@@ -1014,7 +1032,7 @@
                 ctx.stroke();
             }
             
-            // Тело
+            // Тело Пакмана
             ctx.save();
             ctx.translate(screenX, screenY);
             
@@ -1043,45 +1061,50 @@
                 const screenX = ghost.x - game.cameraX;
                 const screenY = ghost.y - game.cameraY;
                 
-                ctx.save();
-                ctx.translate(screenX, screenY);
-                
-                // Тело
-                ctx.fillStyle = ghost.scared ? '#0000ff' : ghost.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, ghost.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Глаза
-                ctx.fillStyle = '#fff';
-                ctx.beginPath();
-                ctx.arc(-ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.25, 0, Math.PI * 2);
-                ctx.arc(ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.25, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Зрачки
-                ctx.fillStyle = '#0000ff';
-                const lookX = pacman.x - ghost.x;
-                const lookY = pacman.y - ghost.y;
-                const angle = Math.atan2(lookY, lookX);
-                ctx.beginPath();
-                ctx.arc(
-                    -ghost.radius * 0.3 + Math.cos(angle) * 4,
-                    -ghost.radius * 0.3 + Math.sin(angle) * 4,
-                    ghost.radius * 0.12,
-                    0,
-                    Math.PI * 2
-                );
-                ctx.arc(
-                    ghost.radius * 0.3 + Math.cos(angle) * 4,
-                    -ghost.radius * 0.3 + Math.sin(angle) * 4,
-                    ghost.radius * 0.12,
-                    0,
-                    Math.PI * 2
-                );
-                ctx.fill();
-                
-                ctx.restore();
+                // Проверяем видимость
+                if (screenX + ghost.radius > 0 && screenX - ghost.radius < canvas.width &&
+                    screenY + ghost.radius > 0 && screenY - ghost.radius < canvas.height) {
+                    
+                    ctx.save();
+                    ctx.translate(screenX, screenY);
+                    
+                    // Тело
+                    ctx.fillStyle = ghost.scared ? '#0000ff' : ghost.color;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, ghost.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Глаза
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(-ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.25, 0, Math.PI * 2);
+                    ctx.arc(ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.25, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Зрачки
+                    ctx.fillStyle = '#0000ff';
+                    const lookX = pacman.x - ghost.x;
+                    const lookY = pacman.y - ghost.y;
+                    const angle = Math.atan2(lookY, lookX);
+                    ctx.beginPath();
+                    ctx.arc(
+                        -ghost.radius * 0.3 + Math.cos(angle) * 4,
+                        -ghost.radius * 0.3 + Math.sin(angle) * 4,
+                        ghost.radius * 0.12,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.arc(
+                        ghost.radius * 0.3 + Math.cos(angle) * 4,
+                        -ghost.radius * 0.3 + Math.sin(angle) * 4,
+                        ghost.radius * 0.12,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.fill();
+                    
+                    ctx.restore();
+                }
             });
         }
 
@@ -1091,33 +1114,45 @@
                     const screenX = powerUp.x - game.cameraX;
                     const screenY = powerUp.y - game.cameraY;
                     
-                    ctx.fillStyle = powerUp.color;
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, powerUp.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Вращение
-                    ctx.save();
-                    ctx.translate(screenX, screenY);
-                    ctx.rotate(Date.now() / 1000);
-                    ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    for (let i = 0; i < 4; i++) {
-                        const angle = (i / 4) * Math.PI * 2;
-                        const x = Math.cos(angle) * powerUp.radius;
-                        const y = Math.sin(angle) * powerUp.radius;
-                        ctx.moveTo(0, 0);
-                        ctx.lineTo(x, y);
+                    if (screenX + powerUp.radius > 0 && screenX - powerUp.radius < canvas.width &&
+                        screenY + powerUp.radius > 0 && screenY - powerUp.radius < canvas.height) {
+                        
+                        ctx.fillStyle = powerUp.color;
+                        ctx.beginPath();
+                        ctx.arc(screenX, screenY, powerUp.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Вращение
+                        ctx.save();
+                        ctx.translate(screenX, screenY);
+                        ctx.rotate(Date.now() / 1000);
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        for (let i = 0; i < 4; i++) {
+                            const angle = (i / 4) * Math.PI * 2;
+                            const x = Math.cos(angle) * powerUp.radius;
+                            const y = Math.sin(angle) * powerUp.radius;
+                            ctx.moveTo(0, 0);
+                            ctx.lineTo(x, y);
+                        }
+                        ctx.stroke();
+                        ctx.restore();
                     }
-                    ctx.stroke();
-                    ctx.restore();
                 }
             });
         }
 
         function drawParticles() {
-            particles.forEach(particle => particle.draw());
+            particles.forEach(particle => {
+                const screenX = particle.x - game.cameraX;
+                const screenY = particle.y - game.cameraY;
+                
+                if (screenX + particle.size > 0 && screenX - particle.size < canvas.width &&
+                    screenY + particle.size > 0 && screenY - particle.size < canvas.height) {
+                    particle.draw();
+                }
+            });
         }
 
         function drawMessages() {
@@ -1125,11 +1160,13 @@
                 const screenX = msg.x - game.cameraX;
                 const screenY = msg.y - game.cameraY;
                 
-                ctx.fillStyle = '#ffff00';
-                ctx.font = '16px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(msg.text, screenX, screenY);
+                if (screenY > -50 && screenY < canvas.height + 50) {
+                    ctx.fillStyle = '#ffff00';
+                    ctx.font = '16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(msg.text, screenX, screenY);
+                }
             });
         }
 
@@ -1183,8 +1220,6 @@
         }
 
         function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             if (game.running && !game.gameOver) {
                 updatePacman();
                 updateGhosts();
@@ -1205,6 +1240,7 @@
         }
 
         function startGame() {
+            console.log("Начало игры!");
             game.running = true;
             game.gameOver = false;
             game.score = 0;
@@ -1215,8 +1251,8 @@
             game.powerMode = false;
             game.dotsCollected = 0;
             
-            pacman.x = 15 * CELL_SIZE + CELL_SIZE / 2;
-            pacman.y = 15 * CELL_SIZE + CELL_SIZE / 2;
+            pacman.x = 12 * CELL_SIZE + CELL_SIZE / 2;
+            pacman.y = 12 * CELL_SIZE + CELL_SIZE / 2;
             pacman.direction.x = 0;
             pacman.direction.y = 0;
             pacman.trail = [];
@@ -1227,6 +1263,11 @@
             startScreen.style.display = 'none';
             gameOverScreen.style.display = 'none';
             rageFill.style.width = '0%';
+            
+            // Обновляем UI
+            scoreElement.textContent = `Счет: 0`;
+            levelElement.textContent = `Уровень: 1`;
+            insanityLevel.textContent = `Сложность: 0%`;
         }
 
         function endGame() {
@@ -1330,8 +1371,12 @@
             canvas.height = window.innerHeight;
         });
 
-        // Запуск
+        // Запуск игры
+        console.log("Игра загружена!");
         gameLoop();
+        
+        // Показываем начальный экран
+        startScreen.style.display = 'flex';
     </script>
 </body>
 </html>
