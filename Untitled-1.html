@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CosmoClicker | Telegram Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(0,219,222,0.3);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        .click-area {
+            width: 300px;
+            height: 300px;
+            margin: 30px auto;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .planet {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, #4287f5, #1a237e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            transition: transform 0.1s;
+            box-shadow: 
+                0 0 60px #4287f5,
+                inset 0 0 50px rgba(255,255,255,0.2);
+            border: 5px solid #00dbde;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .planet::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 30%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 70%
+            );
+            transform: rotate(30deg);
+        }
+
+        .click-effect {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: clickAnimation 0.5s forwards;
+        }
+
+        @keyframes clickAnimation {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .upgrades {
+            margin-top: 40px;
+        }
+
+        .upgrade-category {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h2 {
+            color: #00dbde;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.3);
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .upgrade-item:hover {
+            background: rgba(0,0,0,0.5);
+            transform: translateX(5px);
+        }
+
+        .upgrade-info {
+            flex-grow: 1;
+        }
+
+        .upgrade-name {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .upgrade-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .upgrade-cost {
+            color: #ffcc00;
+            font-weight: bold;
+            font-size: 1.1rem;
+            min-width: 100px;
+            text-align: right;
+        }
+
+        button {
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,219,222,0.5);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .autoclicker {
+            background: rgba(0,255,136,0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            border-left: 4px solid #00ff88;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .telegram-btn {
+            background: linear-gradient(90deg, #0088cc, #34b7f1);
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .click-area {
+                width: 250px;
+                height: 250px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 CosmoClicker</h1>
+            <p>Кликай по планете, зарабатывай космические очки!</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">Космо-очки</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Сила клика</div>
+                <div class="stat-value" id="clickPower">1</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Очков/сек</div>
+                <div class="stat-value" id="perSecond">0</div>
+            </div>
+        </div>
+
+        <div class="click-area" id="clickArea">
+            <div class="planet" id="planet">
+                🌍
+            </div>
+        </div>
+
+        <div class="upgrades">
+            <div class="upgrade-category">
+                <h2>⚡ Улучшения клика</h2>
+                <div id="clickUpgrades">
+                    <!-- Сгенерируется скриптом -->
+                </div>
+            </div>
+
+            <div class="upgrade-category">
+                <h2>🤖 Авто-кликеры</h2>
+                <div id="autoclickers">
+                    <!-- Сгенерируется скриптом -->
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Игра создана специально для Telegram Mini Apps</p>
+            <button class="telegram-btn" onclick="shareResults()">📢 Поделиться результатом</button>
+        </footer>
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        // Игровые переменные
+        let score = 0;
+        let clickPower = 1;
+        let perSecond = 0;
+        let upgrades = [
+            { id: 1, name: "Усилитель клика", desc: "+1 к силе клика", cost: 10, power: 1, owned: 0 },
+            { id: 2, name: "Супер-заряд", desc: "+5 к силе клика", cost: 50, power: 5, owned: 0 },
+            { id: 3, name: "Планетарный удар", desc: "+20 к силе клика", cost: 200, power: 20, owned: 0 },
+            { id: 4, name: "Галактическая энергия", desc: "+100 к силе клика", cost: 1000, power: 100, owned: 0 }
+        ];
+        
+        let autoclickers = [
+            { id: 1, name: "Робот-кликер", desc: "Автоматически кликает 1 раз/сек", cost: 100, power: 1, owned: 0 },
+            { id: 2, name: "Космическая станция", desc: "Автоматически кликает 5 раз/сек", cost: 500, power: 5, owned: 0 },
+            { id: 3, name: "Квантовый компьютер", desc: "Автоматически кликает 20 раз/сек", cost: 2000, power: 20, owned: 0 }
+        ];
+
+        // Элементы DOM
+        const scoreElement = document.getElementById('score');
+        const clickPowerElement = document.getElementById('clickPower');
+        const perSecondElement = document.getElementById('perSecond');
+        const planet = document.getElementById('planet');
+        const clickArea = document.getElementById('clickArea');
+        const clickUpgradesElement = document.getElementById('clickUpgrades');
+        const autoclickersElement = document.getElementById('autoclickers');
+
+        // Инициализация интерфейса
+        function initGame() {
+            loadGame();
+            renderUpgrades();
+            renderAutoclickers();
+            updateUI();
+            startAutoclickers();
+            
+            // Сохранение каждые 5 секунд
+            setInterval(saveGame, 5000);
+            
+            // Обновление каждую секунду
+            setInterval(updateUI, 1000);
+        }
+
+        // Обработка клика
+        function handleClick(event) {
+            // Добавление очков
+            score += clickPower;
+            
+            // Создание эффекта клика
+            createClickEffect(event);
+            
+            // Анимация планеты
+            planet.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                planet.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Обновление интерфейса
+            updateUI();
+            
+            // Воспроизведение вибрации (если доступно)
+            if (navigator.vibrate) {
+                navigator.vibrate(10);
+            }
+        }
+
+        // Создание эффекта клика
+        function createClickEffect(event) {
+            const rect = clickArea.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const effect = document.createElement('div');
+            effect.className = 'click-effect';
+            effect.style.left = `${x - 25}px`;
+            effect.style.top = `${y - 25}px`;
+            
+            clickArea.appendChild(effect);
+            setTimeout(() => effect.remove(), 500);
+        }
+
+        // Покупка улучшения
+        function buyUpgrade(id) {
+            const upgrade = upgrades.find(u => u.id === id);
+            
+            if (score >= upgrade.cost) {
+                score -= upgrade.cost;
+                clickPower += upgrade.power;
+                upgrade.owned++;
+                upgrade.cost = Math.floor(upgrade.cost * 1.5);
+                
+                updateUI();
+                renderUpgrades();
+                saveGame();
+            }
+        }
+
+        // Покупка авто-кликера
+        function buyAutoclicker(id) {
+            const clicker = autoclickers.find(a => a.id === id);
+            
+            if (score >= clicker.cost) {
+                score -= clicker.cost;
+                clicker.owned++;
+                clicker.cost = Math.floor(clicker.cost * 2);
+                perSecond += clicker.power;
+                
+                updateUI();
+                renderAutoclickers();
+                saveGame();
+            }
+        }
+
+        // Автоматические кликеры
+        function startAutoclickers() {
+            setInterval(() => {
+                let total = 0;
+                autoclickers.forEach(clicker => {
+                    total += clicker.power * clicker.owned;
+                });
+                
+                if (total > 0) {
+                    score += total;
+                    updateUI();
+                }
+            }, 1000);
+        }
+
+        // Обновление интерфейса
+        function updateUI() {
+            scoreElement.textContent = formatNumber(score);
+            clickPowerElement.textContent = formatNumber(clickPower);
+            
+            // Расчет очков в секунду
+            let totalPerSecond = 0;
+            autoclickers.forEach(clicker => {
+                totalPerSecond += clicker.power * clicker.owned;
+            });
+            perSecond = totalPerSecond;
+            perSecondElement.textContent = formatNumber(perSecond);
+        }
+
+        // Рендер улучшений
+        function renderUpgrades() {
+            clickUpgradesElement.innerHTML = '';
+            
+            upgrades.forEach(upgrade => {
+                const button = document.createElement('button');
+                button.textContent = 'Купить';
+                button.disabled = score < upgrade.cost;
+                button.onclick = () => buyUpgrade(upgrade.id);
+                
+                const div = document.createElement('div');
+                div.className = 'upgrade-item';
+                div.innerHTML = `
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">${upgrade.name} (${upgrade.owned})</div>
+                        <div class="upgrade-desc">${upgrade.desc}</div>
+                    </div>
+                    <div class="upgrade-cost">${formatNumber(upgrade.cost)} очков</div>
+                `;
+                div.appendChild(button);
+                clickUpgradesElement.appendChild(div);
+            });
+        }
+
+        // Рендер авто-кликеров
+        function renderAutoclickers() {
+            autoclickersElement.innerHTML = '';
+            
+            autoclickers.forEach(clicker => {
+                if (clicker.owned > 0) {
+                    const div = document.createElement('div');
+                    div.className = 'autoclicker';
+                    div.innerHTML = `
+                        <div>
+                            <strong>${clicker.name}</strong> (${clicker.owned})
+                            <div style="font-size: 0.9em; color: #ccc;">
+                                +${clicker.power * clicker.owned} очков/сек
+                            </div>
+                        </div>
+                    `;
+                    autoclickersElement.appendChild(div);
+                }
+                
+                const button = document.createElement('button');
+                button.textContent = 'Купить';
+                button.disabled = score < clicker.cost;
+                button.onclick = () => buyAutoclicker(clicker.id);
+                
+                const div = document.createElement('div');
+                div.className = 'upgrade-item';
+                div.innerHTML = `
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">${clicker.name} (${clicker.owned})</div>
+                        <div class="upgrade-desc">${clicker.desc}</div>
+                    </div>
+                    <div class="upgrade-cost">${formatNumber(clicker.cost)} очков</div>
+                `;
+                div.appendChild(button);
+                autoclickersElement.appendChild(div);
+            });
+        }
+
+        // Форматирование чисел
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(2) + 'M';
+            }
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        // Сохранение игры
+        function saveGame() {
+            const gameData = {
+                score,
+                clickPower,
+                upgrades,
+                autoclickers,
+                perSecond,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('cosmoclicker_save', JSON.stringify(gameData));
+        }
+
+        // Загрузка игры
+        function loadGame() {
+            const saved = localStorage.getItem('cosmoclicker_save');
+            if (saved) {
+                try {
+                    const gameData = JSON.parse(saved);
+                    score = gameData.score || 0;
+                    clickPower = gameData.clickPower || 1;
+                    perSecond = gameData.perSecond || 0;
+                    upgrades = gameData.upgrades || upgrades;
+                    autoclickers = gameData.autoclickers || autoclickers;
+                } catch (e) {
+                    console.error('Ошибка загрузки:', e);
+                }
+            }
+        }
+
+        // Поделиться результатом
+        function shareResults() {
+            const message = `🚀 Я заработал ${formatNumber(score)} очков в CosmoClicker!\nСила клика: ${clickPower}\nОчков/сек: ${perSecond}\n\nПрисоединяйся: https://t.me/...`;
+            
+            if (tg.platform !== 'unknown') {
+                tg.shareMessage(message);
+            } else {
+                alert(message + '\n\n(Вне Telegram можно только скопировать текст)');
+                navigator.clipboard.writeText(message);
+            }
+        }
+
+        // Сброс игры
+        function resetGame() {
+            if (confirm('Вы уверены? Весь прогресс будет потерян!')) {
+                localStorage.removeItem('cosmoclicker_save');
+                location.reload();
+            }
+        }
+
+        // Добавление кнопки сброса (скрытая для пользователя)
+        document.addEventListener('dblclick', (e) => {
+            if (e.target === document.body) {
+                resetGame();
+            }
+        });
+
+        // Запуск игры
+        clickArea.addEventListener('click', handleClick);
+        initGame();
+    </script>
+</body>
+</html>
