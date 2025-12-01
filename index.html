@@ -1,63 +1,20 @@
-Skip to content
-Navigation Menu
-warenikyt-debug
-comso-tma
-
-Type / to search
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-Commit 0684b0e
-warenikyt-debug
-warenikyt-debug
-authored
-26 minutes ago
-·
-·
-Verified
-Update index.html
-main
-1 parent 
-afd7112
- commit 
-0684b0e
-File tree
-Filter files…
-index.html
-1 file changed
-+1151
--546
-lines changed
-Search within code
- 
-Customizable line height
-The default line height has been increased for improved accessibility. You can choose to enable a more compact line height from the view settings menu.
-
-‎index.html‎
-+1 151
--546
-Lines changed: 1151 additions & 546 deletions
-Original file line number	Diff line number	Diff line change
-@@ -3,7 +3,7 @@
+<!DOCTYPE html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Космический защитник</title>
     <title>Метеоритный Мятеж</title>
     <style>
         * {
             margin: 0;
-@@ -15,9 +15,10 @@
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
         body {
             background: #000;
             color: #fff;
-            font-family: Arial, sans-serif;
             font-family: 'Courier New', monospace;
             overflow: hidden;
             height: 100vh;
@@ -65,33 +22,52 @@ Original file line number	Diff line number	Diff line change
         }
 
         #gameContainer {
-@@ -38,7 +39,7 @@
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #000;
+        }
+
+        canvas {
+            display: block;
+            background: #000;
+        }
+
+        #startScreen {
+            position: absolute;
+            top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(45deg, #000428, #004e92);
             background: radial-gradient(circle at center, #220022 0%, #000 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
-@@ -58,7 +59,7 @@
+            align-items: center;
+            z-index: 100;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #gameScreen {
+            display: none;
+        }
+
+        #gameOverScreen {
+            position: absolute;
+            top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
             background: rgba(0, 0, 0, 0.95);
             display: none;
             flex-direction: column;
             justify-content: center;
-@@ -67,202 +68,353 @@
+            align-items: center;
+            z-index: 200;
             text-align: center;
         }
 
-        h1 {
-            color: #0ff;
-            font-size: 48px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px #0ff;
         .title {
             color: #ff00ff;
             font-size: 52px;
@@ -99,6 +75,7 @@ Original file line number	Diff line number	Diff line change
             text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff;
             animation: glitch 3s infinite;
         }
+
         @keyframes glitch {
             0%, 100% { transform: translate(0, 0); }
             25% { transform: translate(-2px, 2px); }
@@ -106,8 +83,6 @@ Original file line number	Diff line number	Diff line change
             75% { transform: translate(-2px, -2px); }
         }
 
-        h2 {
-            color: #ff0;
         .subtitle {
             color: #00ffff;
             font-size: 24px;
@@ -116,47 +91,28 @@ Original file line number	Diff line number	Diff line change
         }
 
         button {
-            background: linear-gradient(45deg, #ff0000, #ff8800);
-            color: white;
             background: linear-gradient(45deg, #ff00ff, #00ffff);
             color: #000;
             border: none;
-            padding: 15px 40px;
-            font-size: 20px;
-            border-radius: 10px;
             padding: 18px 45px;
             font-size: 22px;
             border-radius: 50px;
             cursor: pointer;
-            margin: 10px;
             margin: 15px;
             font-weight: bold;
-            transition: transform 0.2s;
-            min-width: 200px;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
         }
 
         button:hover {
-            transform: scale(1.05);
             transform: scale(1.1) rotate(5deg);
             box-shadow: 0 0 30px #ff00ff;
         }
 
-        #scoreDisplay {
         button::before {
             content: '';
             position: absolute;
-            top: 20px;
-            left: 20px;
-            color: #0ff;
-            font-size: 24px;
-            font-weight: bold;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: 2px solid #0ff;
             top: -10px;
             left: -10px;
             right: -10px;
@@ -167,24 +123,18 @@ Original file line number	Diff line number	Diff line change
             opacity: 0;
             transition: opacity 0.3s;
         }
+
         button:hover::before {
             opacity: 0.5;
         }
 
-        #livesDisplay {
         #hud {
             position: absolute;
             top: 20px;
-            right: 20px;
-            color: #ff0;
             left: 20px;
             color: #ffff00;
             font-size: 24px;
             font-weight: bold;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: 2px solid #ff0;
             background: rgba(0, 0, 0, 0.7);
             padding: 15px 25px;
             border-radius: 15px;
@@ -193,21 +143,8 @@ Original file line number	Diff line number	Diff line change
             box-shadow: 0 0 20px #ffff00;
         }
 
-        #levelDisplay {
         #bossHealth {
             position: absolute;
-            top: 80px;
-            left: 20px;
-            color: #f0f;
-            font-size: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 8px 15px;
-            border-radius: 8px;
-            border: 2px solid #f0f;
-        }
-        .instructions {
-            background: rgba(0, 100, 255, 0.2);
-            padding: 20px;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
@@ -216,18 +153,11 @@ Original file line number	Diff line number	Diff line change
             background: rgba(0, 0, 0, 0.7);
             border: 3px solid #ff0000;
             border-radius: 15px;
-            border: 2px solid #0ff;
-            max-width: 500px;
-            margin: 20px;
-            text-align: left;
             z-index: 150;
             overflow: hidden;
             box-shadow: 0 0 20px #ff0000;
         }
 
-        .instructions h3 {
-            color: #ff0;
-            margin-bottom: 10px;
         #bossHealthFill {
             height: 100%;
             background: linear-gradient(90deg, #ff0000, #ffff00);
@@ -235,8 +165,6 @@ Original file line number	Diff line number	Diff line change
             transition: width 0.3s;
         }
 
-        .instructions p {
-            margin: 8px 0;
         #bossHealthText {
             position: absolute;
             top: 50%;
@@ -247,29 +175,19 @@ Original file line number	Diff line number	Diff line change
             text-shadow: 0 0 5px #000;
         }
 
-        .controls {
         #abilities {
             position: absolute;
-            bottom: 30px;
-            left: 0;
-            right: 0;
             bottom: 100px;
             left: 20px;
             display: flex;
-            justify-content: center;
-            gap: 20px;
             gap: 15px;
             z-index: 150;
         }
 
-        .controlBtn {
         .abilityBtn {
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            background: rgba(255, 100, 0, 0.7);
-            border: 3px solid #ff0;
-            color: white;
             background: linear-gradient(45deg, #ff00ff, #00ffff);
             border: 3px solid #ffff00;
             color: #000;
@@ -278,33 +196,27 @@ Original file line number	Diff line number	Diff line change
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.1s;
             transition: all 0.2s;
             font-weight: bold;
             box-shadow: 0 0 15px #ffff00;
         }
 
-        .controlBtn:active {
-            background: rgba(255, 200, 0, 0.9);
         .abilityBtn:active {
             transform: scale(0.9);
         }
 
-        #shootBtn {
         .abilityBtn.disabled {
             opacity: 0.3;
             cursor: not-allowed;
         }
+
         .abilityBtn.cooldown {
             position: relative;
         }
+
         .abilityBtn.cooldown::after {
             content: '';
             position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(255, 0, 0, 0.7);
-            border-color: #f00;
             top: 0;
             left: 0;
             width: 100%;
@@ -313,6 +225,7 @@ Original file line number	Diff line number	Diff line change
             border-radius: 50%;
             z-index: 1;
         }
+
         #messageBox {
             position: absolute;
             top: 50%;
@@ -331,10 +244,12 @@ Original file line number	Diff line number	Diff line change
             text-align: center;
             animation: pulse 1s infinite;
         }
+
         @keyframes pulse {
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
             50% { transform: translate(-50%, -50%) scale(1.1); }
         }
+
         .crazyRules {
             background: rgba(255, 0, 255, 0.2);
             padding: 25px;
@@ -345,22 +260,26 @@ Original file line number	Diff line number	Diff line change
             text-align: left;
             box-shadow: 0 0 30px #00ffff;
         }
+
         .crazyRules h3 {
             color: #ffff00;
             font-size: 28px;
             margin-bottom: 15px;
             text-align: center;
         }
+
         .crazyRules p {
             color: #fff;
             margin: 10px 0;
             font-size: 18px;
             padding-left: 10px;
         }
+
         .crazyRules p::before {
             content: '🌀';
             margin-right: 10px;
         }
+
         #meteorCount {
             position: absolute;
             top: 90px;
@@ -372,6 +291,7 @@ Original file line number	Diff line number	Diff line change
             border-radius: 10px;
             border: 2px solid #00ff00;
         }
+
         .phaseIndicator {
             position: absolute;
             bottom: 20px;
@@ -383,6 +303,7 @@ Original file line number	Diff line number	Diff line change
             border-radius: 10px;
             border: 2px solid #ff00ff;
         }
+
         .strangeMessage {
             position: absolute;
             color: #ff00ff;
@@ -393,10 +314,12 @@ Original file line number	Diff line number	Diff line change
             pointer-events: none;
             animation: floatUp 3s forwards;
         }
+
         @keyframes floatUp {
             0% { transform: translateY(0); opacity: 1; }
             100% { transform: translateY(-100px); opacity: 0; }
         }
+
         #gravityZone {
             position: absolute;
             border: 2px dashed #00ffff;
@@ -409,18 +332,7 @@ Original file line number	Diff line number	Diff line change
 </head>
 <body>
     <div id="gameContainer">
-        <!-- Стартовый экран -->
         <div id="startScreen">
-            <h1>КОСМИЧЕСКИЙ ЗАЩИТНИК</h1>
-            <h2>Защити Землю от метеоритов!</h2>
-            
-            <div class="instructions">
-                <h3>Как играть:</h3>
-                <p>• Управляй кораблём стрелками или кнопками</p>
-                <p>• Стреляй по метеоритам кнопкой "ОГОНЬ"</p>
-                <p>• Избегай столкновений с метеоритами</p>
-                <p>• Собери 1000 очков для перехода на новый уровень</p>
-                <p>• У тебя 3 жизни</p>
             <h1 class="title">МЕТЕОРИТНЫЙ МЯТЕЖ</h1>
             <h2 class="subtitle">ТЫ - МЕТЕОРИТ. УБЕЙ БОССА-КОРАБЛЬ!</h2>
             
@@ -435,34 +347,23 @@ Original file line number	Diff line number	Diff line change
                 <p>Собери 50 метеоритов для МЕТЕОРИТНОГО ШОКЕРА</p>
                 <p>Босс имеет 3 фазы с разным поведением</p>
             </div>
-
-            <button id="startBtn">НАЧАТЬ ИГРУ</button>
-            <button id="startBtn">НАЧАТЬ БЕЗУМИЕ</button>
+            
+            <button id="startBtn">НАЧАТЬ</button>
         </div>
-
-        <!-- Игровой экран -->
+        
         <div id="gameScreen">
             <canvas id="gameCanvas"></canvas>
-
-            <div id="scoreDisplay">Очки: 0</div>
-            <div id="livesDisplay">Жизни: 3</div>
-            <div id="levelDisplay">Уровень: 1</div>
+            
             <div id="hud">
                 <div>Уничтожено метеоритов: <span id="meteorsDestroyed">0</span></div>
                 <div>Собрано энергии: <span id="energy">0</span>/50</div>
             </div>
-
-            <div class="controls">
-                <button class="controlBtn" id="leftBtn">←</button>
-                <button class="controlBtn" id="upBtn">↑</button>
-                <button class="controlBtn" id="downBtn">↓</button>
-                <button class="controlBtn" id="rightBtn">→</button>
+            
             <div id="bossHealth">
                 <div id="bossHealthFill"></div>
                 <div id="bossHealthText">БОСС: <span id="bossHealthPercent">100</span>%</div>
             </div>
-
-            <button class="controlBtn" id="shootBtn">🔥</button>
+            
             <div id="meteorCount">Активных метеоритов: <span id="meteorCountNum">0</span></div>
             
             <div class="phaseIndicator">Фаза безумия: <span id="phaseNumber">1</span></div>
@@ -476,25 +377,19 @@ Original file line number	Diff line number	Diff line change
             
             <div id="gravityZone"></div>
         </div>
-
-        <!-- Экран окончания игры -->
+        
         <div id="gameOverScreen">
-            <h1>ИГРА ОКОНЧЕНА</h1>
-            <h2>Ваш результат: <span id="finalScore">0</span> очков</h2>
-            <button id="restartBtn">ИГРАТЬ СНОВА</button>
-            <button id="menuBtn">В МЕНЮ</button>
-            <h1 class="title" id="gameOverTitle">БЕЗУМИЕ ЗАВЕРШЕНО</h1>
+            <h1 class="title" id="gameOverTitle"> КОНЕЦ</h1>
             <h2 class="subtitle">Ты уничтожил <span id="finalMeteors">0</span> метеоритов</h2>
             <h2 class="subtitle">Босс был убит за <span id="finalTime">0</span> секунд</h2>
-            <button id="restartBtn">ЕЩЁ РАЗ В БЕЗУМИЕ</button>
-            <button id="menuBtn">В МЕНЮ ХАОСА</button>
+            <button id="restartBtn">ЕЩЁ РАЗ</button>
+            <button id="menuBtn">В МЕНЮ</button>
         </div>
         
         <div id="messageBox"></div>
     </div>
 
     <script>
-        // ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ =====
         // ===== ПЕРЕМЕННЫЕ И ЭЛЕМЕНТЫ =====
         const startScreen = document.getElementById('startScreen');
         const gameScreen = document.getElementById('gameScreen');
@@ -502,18 +397,8 @@ Original file line number	Diff line number	Diff line change
         const startBtn = document.getElementById('startBtn');
         const restartBtn = document.getElementById('restartBtn');
         const menuBtn = document.getElementById('menuBtn');
-        const scoreDisplay = document.getElementById('scoreDisplay');
-        const livesDisplay = document.getElementById('livesDisplay');
-        const levelDisplay = document.getElementById('levelDisplay');
-        const finalScore = document.getElementById('finalScore');
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        // Кнопки управления
-        const leftBtn = document.getElementById('leftBtn');
-        const rightBtn = document.getElementById('rightBtn');
-        const upBtn = document.getElementById('upBtn');
-        const downBtn = document.getElementById('downBtn');
-        const shootBtn = document.getElementById('shootBtn');
         
         // Элементы HUD
         const meteorsDestroyedElement = document.getElementById('meteorsDestroyed');
@@ -533,26 +418,15 @@ Original file line number	Diff line number	Diff line change
 
         // ===== НАСТРОЙКА CANVAS =====
         function setupCanvas() {
-@@ -275,411 +427,1014 @@ <h2>Ваш результат: <span id="finalScore">0</span> очков</h2>
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        setupCanvas();
+        window.addEventListener('resize', setupCanvas);
+
         // ===== ИГРОВЫЕ ПЕРЕМЕННЫЕ =====
         let game = {
             running: false,
-            score: 0,
-            lives: 3,
-            level: 1,
-            gameOver: false
-        };
-        // ===== ИГРОВЫЕ ОБЪЕКТЫ =====
-        let player = {
-            x: canvas.width / 2,
-            y: canvas.height - 100,
-            width: 60,
-            height: 40,
-            speed: 8,
-            color: '#0ff',
-            shooting: false,
-            shootCooldown: 0,
-            shootDelay: 15
             meteorsDestroyed: 0,
             energy: 0,
             phase: 1,
@@ -567,7 +441,6 @@ Original file line number	Diff line number	Diff line change
             freezeTime: 0
         };
 
-        let bullets = [];
         // ===== МЕТЕОРИТЫ =====
         let meteors = [];
         let boss = null;
@@ -576,8 +449,8 @@ Original file line number	Diff line number	Diff line change
         let strangeMessages = [];
         let stars = [];
 
-        // ===== СОЗДАНИЕ ЗВЁЗДНОГО ФОНА =====
         // ===== ФУНКЦИИ ИНИЦИАЛИЗАЦИИ =====
+
         function initGame() {
             // Сброс игры
             game.running = true;
@@ -615,16 +488,14 @@ Original file line number	Diff line number	Diff line change
             // Показать сообщение
             showMessage("НАЧАЛО БЕЗУМИЯ!", "#ff00ff");
         }
+
         function createStars() {
             stars = [];
-            for (let i = 0; i < 200; i++) {
             for (let i = 0; i < 300; i++) {
                 stars.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     size: Math.random() * 3 + 1,
-                    speed: Math.random() * 0.5 + 0.1,
-                    brightness: Math.random() * 0.5 + 0.5
                     speed: Math.random() * 0.3 + 0.1,
                     color: Math.random() > 0.5 ? '#ffffff' : '#aaffff',
                     twinkle: Math.random() * 0.5 + 0.5
@@ -683,6 +554,7 @@ Original file line number	Diff line number	Diff line change
                 trail: []
             });
         }
+
         function createBoss() {
             boss = {
                 x: canvas.width / 2,
@@ -704,26 +576,22 @@ Original file line number	Diff line number	Diff line change
                 spawnTimer: 0
             };
         }
+
         // ===== ОСНОВНЫЕ ФУНКЦИИ ИГРЫ =====
 
-        // Отрисовка фона
         function drawBackground() {
-            // Космический фон
             // Чёрный фон
             ctx.fillStyle = '#000011';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Звезды
+            
             // Звёзды
             stars.forEach(star => {
-                ctx.fillStyle = `rgba(255, 255, 255, ${star.brightness})`;
                 const alpha = star.twinkle * (0.5 + Math.sin(Date.now() / 1000 + star.x) * 0.3);
                 ctx.fillStyle = `rgba(${star.color === '#ffffff' ? '255,255,255' : '170,255,255'}, ${alpha})`;
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                 ctx.fill();
-
-                // Движение звезд
+                
                 // Движение звёзд
                 star.y += star.speed;
                 if (star.y > canvas.height) {
@@ -731,17 +599,7 @@ Original file line number	Diff line number	Diff line change
                     star.x = Math.random() * canvas.width;
                 }
             });
-
-            // Земля внизу
-            ctx.fillStyle = 'rgba(0, 100, 255, 0.3)';
-            ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
             
-            // Градиент к земле
-            const gradient = ctx.createLinearGradient(0, canvas.height - 100, 0, canvas.height);
-            gradient.addColorStop(0, 'rgba(0, 50, 150, 0.1)');
-            gradient.addColorStop(1, 'rgba(0, 100, 255, 0.3)');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
             // Странные линии
             if (game.phase > 1) {
                 ctx.strokeStyle = `rgba(255, 0, 255, ${0.2 + Math.sin(Date.now() / 500) * 0.2})`;
@@ -759,6 +617,7 @@ Original file line number	Diff line number	Diff line change
                 }
             }
         }
+
         function drawMeteors() {
             meteors.forEach(meteor => {
                 // След метеорита
@@ -822,17 +681,12 @@ Original file line number	Diff line number	Diff line change
             });
         }
 
-        // Отрисовка игрока
-        function drawPlayer() {
         function drawBoss() {
             if (!boss || !game.bossActive) return;
             
             ctx.save();
-            ctx.translate(player.x, player.y);
             ctx.translate(boss.x, boss.y);
-
-            // Корпус корабля
-            ctx.fillStyle = player.color;
+            
             // Щит (если активен)
             if (boss.shield) {
                 ctx.strokeStyle = '#00ffff';
@@ -847,9 +701,6 @@ Original file line number	Diff line number	Diff line change
             // Корпус босса
             ctx.fillStyle = boss.color;
             ctx.beginPath();
-            ctx.moveTo(0, -player.height/2);
-            ctx.lineTo(-player.width/2, player.height/2);
-            ctx.lineTo(player.width/2, player.height/2);
             
             // Странная форма босса
             ctx.moveTo(0, -boss.height/2);
@@ -862,26 +713,13 @@ Original file line number	Diff line number	Diff line change
             }
             ctx.closePath();
             ctx.fill();
-
-            // Кабина
-            ctx.fillStyle = '#00ffff';
+            
             // Центральная часть
             ctx.fillStyle = '#ff00ff';
             ctx.beginPath();
-            ctx.arc(0, -player.height/4, player.width/4, 0, Math.PI * 2);
             ctx.arc(0, 0, boss.width/4, 0, Math.PI * 2);
             ctx.fill();
-
-            // Двигатели
-            ctx.fillStyle = '#ff9900';
-            ctx.fillRect(-player.width/4, player.height/2, player.width/8, 10);
-            ctx.fillRect(player.width/8, player.height/2, player.width/8, 10);
             
-            // Огонь из двигателей
-            if (Math.random() > 0.3) {
-                ctx.fillStyle = '#ff0000';
-                ctx.fillRect(-player.width/4 - 2, player.height/2 + 10, player.width/8 + 4, 15);
-                ctx.fillRect(player.width/8 - 2, player.height/2 + 10, player.width/8 + 4, 15);
             // Оружия
             ctx.fillStyle = '#ffff00';
             for (let i = 0; i < 4; i++) {
@@ -903,7 +741,7 @@ Original file line number	Diff line number	Diff line change
                 
                 ctx.restore();
             }
-
+            
             // Глаза
             ctx.fillStyle = '#ffffff';
             ctx.beginPath();
@@ -925,67 +763,31 @@ Original file line number	Diff line number	Diff line change
             ctx.restore();
         }
 
-        // Создание пули
-        function shoot() {
-            if (player.shootCooldown <= 0) {
-                bullets.push({
-                    x: player.x,
-                    y: player.y - player.height/2,
-                    width: 5,
-                    height: 15,
-                    speed: 12,
-                    color: '#ffff00'
-                });
-                player.shootCooldown = player.shootDelay;
-            }
-        }
-        // Отрисовка и обновление пуль
-        function updateBullets() {
-            // Обновляем пули
-            for (let i = bullets.length - 1; i >= 0; i--) {
-                const bullet = bullets[i];
-                bullet.y -= bullet.speed;
-                
-                // Удаляем пули за экраном
-                if (bullet.y < -20) {
-                    bullets.splice(i, 1);
-                    continue;
-                }
         function drawBullets() {
             bossBullets.forEach(bullet => {
                 ctx.save();
                 ctx.translate(bullet.x, bullet.y);
                 ctx.rotate(bullet.rotation);
-
-                // Отрисовка пули
+                
                 // Пуля
                 ctx.fillStyle = bullet.color;
-                ctx.fillRect(bullet.x - bullet.width/2, bullet.y, bullet.width, bullet.height);
                 ctx.beginPath();
                 ctx.moveTo(0, -bullet.size);
                 ctx.lineTo(-bullet.size/2, bullet.size);
                 ctx.lineTo(bullet.size/2, bullet.size);
                 ctx.closePath();
                 ctx.fill();
-
-                // Свечение пули
+                
                 // Свечение
                 ctx.shadowColor = bullet.color;
-                ctx.shadowBlur = 10;
-                ctx.fillRect(bullet.x - bullet.width/2, bullet.y, bullet.width, bullet.height);
                 ctx.shadowBlur = 15;
                 ctx.fill();
                 ctx.shadowBlur = 0;
-
-                // Проверка столкновений с метеоритами
-                for (let j = meteors.length - 1; j >= 0; j--) {
-                    const meteor = meteors[j];
-                    if (checkCollision(bullet, meteor)) {
-                        // Создаем взрыв
-                        createExplosion(meteor.x, meteor.y, meteor.color);
+                
                 ctx.restore();
             });
         }
+
         function drawParticles() {
             particles.forEach(particle => {
                 ctx.globalAlpha = particle.life / 100;
@@ -996,6 +798,7 @@ Original file line number	Diff line number	Diff line change
                 ctx.globalAlpha = 1;
             });
         }
+
         function drawStrangeMessages() {
             strangeMessages.forEach(msg => {
                 ctx.fillStyle = msg.color;
@@ -1005,7 +808,9 @@ Original file line number	Diff line number	Diff line change
                 ctx.fillText(msg.text, msg.x, msg.y);
             });
         }
+
         // ===== ОБНОВЛЕНИЕ ИГРЫ =====
+
         function updateMeteors() {
             for (let i = meteors.length - 1; i >= 0; i--) {
                 const meteor = meteors[i];
@@ -1039,19 +844,13 @@ Original file line number	Diff line number	Diff line change
                     if (bulletDistance < meteor.size + bullet.size) {
                         // Попадание в метеорит
                         meteor.health--;
-
-                        // Удаляем метеорит и пулю
-                        meteors.splice(j, 1);
-                        bullets.splice(i, 1);
+                        
                         // Эффект попадания
                         createParticles(bullet.x, bullet.y, bullet.color);
-
-                        // Добавляем очки
-                        game.score += 10 * game.level;
+                        
                         // Удаление пули
                         bossBullets.splice(j, 1);
-
-                        break;
+                        
                         if (meteor.health <= 0) {
                             // Уничтожение метеорита
                             createExplosion(meteor.x, meteor.y, meteor.color);
@@ -1099,6 +898,7 @@ Original file line number	Diff line number	Diff line change
                 }
             }
         }
+
         function updateBoss() {
             if (!boss || !game.bossActive) return;
             
@@ -1117,10 +917,7 @@ Original file line number	Diff line number	Diff line change
                 bossAttack();
                 boss.attackTimer = 0;
             }
-
-            // Обновляем кулдаун стрельбы
-            if (player.shootCooldown > 0) {
-                player.shootCooldown--;
+            
             // Телепортация
             boss.teleportTimer++;
             if (boss.teleportTimer > boss.teleportCooldown && game.phase > 1) {
@@ -1155,6 +952,7 @@ Original file line number	Diff line number	Diff line change
                 bossDeath();
             }
         }
+
         function bossAttack() {
             if (!boss) return;
             
@@ -1222,6 +1020,7 @@ Original file line number	Diff line number	Diff line change
             
             patterns[pattern]();
         }
+
         function teleportBoss() {
             if (!boss) return;
             
@@ -1239,20 +1038,11 @@ Original file line number	Diff line number	Diff line change
             showMessage("БОСС ТЕЛЕПОРТИРОВАЛСЯ!", "#00ffff");
         }
 
-        // Создание метеоритов
-        function createMeteor() {
-            const size = Math.random() * 40 + 20;
         function createBossMeteor() {
             const x = boss.x + (Math.random() - 0.5) * 200;
             const y = boss.y + 100;
             
             meteors.push({
-                x: Math.random() * (canvas.width - size * 2) + size,
-                y: -size,
-                width: size,
-                height: size,
-                speed: Math.random() * 3 + 1 + game.level * 0.5,
-                color: `hsl(${Math.random() * 60 + 20}, 70%, 50%)`,
                 x: x,
                 y: y,
                 size: 25,
@@ -1263,7 +1053,6 @@ Original file line number	Diff line number	Diff line change
                 targetX: Math.random() * canvas.width,
                 targetY: Math.random() * canvas.height,
                 rotation: Math.random() * Math.PI * 2,
-                rotationSpeed: (Math.random() - 0.5) * 0.1
                 rotationSpeed: (Math.random() - 0.5) * 0.05,
                 trail: [],
                 isBossMeteor: true
@@ -1272,26 +1061,15 @@ Original file line number	Diff line number	Diff line change
             showStrangeMessage("БОСС МЕТЕОРИТ!", x, y, '#ff00ff');
         }
 
-        // Отрисовка и обновление метеоритов
-        function updateMeteors() {
-            for (let i = meteors.length - 1; i >= 0; i--) {
-                const meteor = meteors[i];
         function updateBullets() {
             for (let i = bossBullets.length - 1; i >= 0; i--) {
                 const bullet = bossBullets[i];
-
-                // Движение метеорита
-                meteor.y += meteor.speed;
-                meteor.rotation += meteor.rotationSpeed;
+                
                 // Движение
                 bullet.x += bullet.dx * bullet.speed;
                 bullet.y += bullet.dy * bullet.speed;
                 bullet.rotation += 0.1;
-
-                // Удаление метеоритов за экраном
-                if (meteor.y > canvas.height + meteor.height) {
-                    meteors.splice(i, 1);
-                    continue;
+                
                 // Удаление за экраном
                 if (bullet.x < -50 || bullet.x > canvas.width + 50 ||
                     bullet.y < -50 || bullet.y > canvas.height + 50) {
@@ -1299,68 +1077,41 @@ Original file line number	Diff line number	Diff line change
                 }
             }
         }
+
         function updateParticles() {
             for (let i = particles.length - 1; i >= 0; i--) {
                 const particle = particles[i];
-
-                // Отрисовка метеорита
-                ctx.save();
-                ctx.translate(meteor.x, meteor.y);
-                ctx.rotate(meteor.rotation);
+                
                 particle.x += particle.dx;
                 particle.y += particle.dy;
                 particle.life--;
-
-                // Форма метеорита
-                ctx.fillStyle = meteor.color;
-                ctx.beginPath();
-                ctx.moveTo(0, -meteor.height/2);
-                for (let j = 0; j < 8; j++) {
-                    const angle = (j / 8) * Math.PI * 2;
-                    const radius = meteor.width/2 * (0.7 + Math.random() * 0.3);
-                    const x = Math.cos(angle) * radius;
-                    const y = Math.sin(angle) * radius;
-                    if (j === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
+                
                 if (particle.life <= 0) {
                     particles.splice(i, 1);
                 }
-                ctx.closePath();
-                ctx.fill();
             }
         }
+
         function updateStrangeMessages() {
             for (let i = strangeMessages.length - 1; i >= 0; i--) {
                 const msg = strangeMessages[i];
-
-                // Текстура метеорита
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-                ctx.beginPath();
-                ctx.arc(-meteor.width/4, -meteor.height/4, meteor.width/8, 0, Math.PI * 2);
-                ctx.fill();
+                
                 msg.y -= 2;
                 msg.life--;
-
-                ctx.restore();
+                
                 if (msg.life <= 0) {
                     strangeMessages.splice(i, 1);
                 }
             }
         }
+
         function updateGame() {
             // Обновление таймера фазы
             game.phaseTimer++;
             if (game.phaseTimer > 1800) { // 30 секундов при 60 FPS
                 game.phase++;
                 game.phaseTimer = 0;
-
-                // Проверка столкновения с игроком
-                if (checkCollision(player, meteor)) {
-                    // Создаем взрыв
-                    createExplosion(meteor.x, meteor.y, '#ff0000');
-                    createExplosion(player.x, player.y, player.color);
-                    
-                    // Удаляем метеорит
+                
                 if (game.phase > 3) game.phase = 3;
                 
                 showMessage(`ФАЗА ${game.phase} БЕЗУМИЯ!`, "#ff00ff");
@@ -1398,7 +1149,9 @@ Original file line number	Diff line number	Diff line change
                 createMeteor();
             }
         }
+
         // ===== СПОСОБНОСТИ =====
+
         function useAbility1() {
             if (game.energy < 10) return;
             
@@ -1430,6 +1183,7 @@ Original file line number	Diff line number	Diff line change
                 }
             });
         }
+
         function useAbility2() {
             if (game.energy < 50) return;
             
@@ -1441,20 +1195,6 @@ Original file line number	Diff line number	Diff line change
                 if (meteors[i].isBossMeteor) {
                     createExplosion(meteors[i].x, meteors[i].y, '#ffff00');
                     meteors.splice(i, 1);
-                    
-                    // Отнимаем жизнь
-                    game.lives--;
-                    
-                    // Мигание игрока
-                    player.color = '#ff0000';
-                    setTimeout(() => {
-                        player.color = '#0ff';
-                    }, 200);
-                    
-                    // Проверка окончания игры
-                    if (game.lives <= 0) {
-                        endGame();
-                    }
                     destroyed++;
                 }
             }
@@ -1467,6 +1207,7 @@ Original file line number	Diff line number	Diff line change
             
             showMessage(`МЕТЕОРИТНЫЙ ШОКЕР! x${destroyed}`, "#ffff00");
         }
+
         function useAbility3() {
             if (game.teleportCooldown > 0) return;
             
@@ -1483,6 +1224,7 @@ Original file line number	Diff line number	Diff line change
                 showMessage("ТЕЛЕПОРТАЦИЯ МЕТЕОРИТОВ!", "#00ff00");
             }
         }
+
         function useAbility4() {
             if (game.energy < 30) return;
             
@@ -1504,6 +1246,7 @@ Original file line number	Diff line number	Diff line change
             
             showMessage("ВРЕМЕННАЯ ЗАМОРОЗКА!", "#00ffff");
         }
+
         function resetAbilities() {
             game.gravityActive = false;
             game.gravityTimer = 0;
@@ -1512,48 +1255,22 @@ Original file line number	Diff line number	Diff line change
             gravityZone.style.display = 'none';
         }
 
-        // Создание взрыва
         // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+
         function createExplosion(x, y, color) {
-            for (let i = 0; i < 20; i++) {
             for (let i = 0; i < 30; i++) {
                 particles.push({
                     x: x,
                     y: y,
-                    size: Math.random() * 8 + 2,
-                    speedX: Math.random() * 10 - 5,
-                    speedY: Math.random() * 10 - 5,
                     size: Math.random() * 10 + 2,
                     dx: Math.random() * 10 - 5,
                     dy: Math.random() * 10 - 5,
                     color: color,
-                    life: 30
                     life: 100
                 });
             }
         }
 
-        // Обновление частиц
-        function updateParticles() {
-            for (let i = particles.length - 1; i >= 0; i--) {
-                const particle = particles[i];
-                
-                particle.x += particle.speedX;
-                particle.y += particle.speedY;
-                particle.life--;
-                
-                if (particle.life <= 0) {
-                    particles.splice(i, 1);
-                    continue;
-                }
-                
-                // Отрисовка частицы
-                ctx.globalAlpha = particle.life / 30;
-                ctx.fillStyle = particle.color;
-                ctx.beginPath();
-                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.globalAlpha = 1;
         function createParticles(x, y, color) {
             for (let i = 0; i < 5; i++) {
                 particles.push({
@@ -1568,12 +1285,6 @@ Original file line number	Diff line number	Diff line change
             }
         }
 
-        // Проверка столкновений
-        function checkCollision(obj1, obj2) {
-            return obj1.x - obj1.width/2 < obj2.x + obj2.width/2 &&
-                   obj1.x + obj1.width/2 > obj2.x - obj2.width/2 &&
-                   obj1.y - obj1.height/2 < obj2.y + obj2.height/2 &&
-                   obj1.y + obj1.height/2 > obj2.y - obj2.height/2;
         function showMessage(text, color) {
             messageBox.textContent = text;
             messageBox.style.color = color;
@@ -1584,6 +1295,7 @@ Original file line number	Diff line number	Diff line change
                 messageBox.style.display = 'none';
             }, 2000);
         }
+
         function showStrangeMessage(text, x, y, color) {
             strangeMessages.push({
                 text: text,
@@ -1594,45 +1306,24 @@ Original file line number	Diff line number	Diff line change
             });
         }
 
-        // Обновление UI
-        function updateUI() {
-            scoreDisplay.textContent = `Очки: ${game.score}`;
-            livesDisplay.textContent = `Жизни: ${game.lives}`;
-            levelDisplay.textContent = `Уровень: ${game.level}`;
         function bossDeath() {
             game.bossActive = false;
             createExplosion(boss.x, boss.y, '#ff0000');
             showMessage("БОСС УНИЧТОЖЕН!", "#ff0000");
-
-            // Проверка перехода на новый уровень
-            if (game.score >= game.level * 1000) {
-                game.level++;
-                showLevelUp();
-            }
+            
             setTimeout(() => {
                 endGame(true);
             }, 3000);
         }
 
-        // Показ сообщения о новом уровне
-        function showLevelUp() {
-            ctx.save();
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            ctx.fillRect(canvas.width/2 - 200, canvas.height/2 - 50, 400, 100);
         function updateHUD() {
             meteorsDestroyedElement.textContent = game.meteorsDestroyed;
             energyElement.textContent = game.energy;
-
-            ctx.fillStyle = '#ffff00';
-            ctx.font = 'bold 36px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(`УРОВЕНЬ ${game.level}!`, canvas.width/2, canvas.height/2);
+            
             const healthPercent = (game.bossHealth / game.maxBossHealth) * 100;
             bossHealthPercentElement.textContent = Math.round(healthPercent);
             bossHealthFillElement.style.width = healthPercent + '%';
-
-            ctx.restore();
+            
             meteorCountNumElement.textContent = meteors.length;
             phaseNumberElement.textContent = game.phase;
             
@@ -1650,23 +1341,11 @@ Original file line number	Diff line number	Diff line change
             ability4.className = ability4.disabled ? 'abilityBtn disabled' : 'abilityBtn';
         }
 
-        // Управление игроком
-        function updatePlayer() {
-            // Ограничение движения в пределах экрана
-            if (player.x - player.width/2 < 0) player.x = player.width/2;
-            if (player.x + player.width/2 > canvas.width) player.x = canvas.width - player.width/2;
-            if (player.y - player.height/2 < 0) player.y = player.height/2;
-            if (player.y + player.height/2 > canvas.height) player.y = canvas.height - player.height/2;
-        }
         // ===== ИГРОВОЙ ЦИКЛ =====
 
-        // Игровой цикл
         function gameLoop() {
-            if (!game.running || game.gameOver) return;
             if (!game.running) return;
-
-            // Очистка экрана
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
             // Обновление
             if (game.freezeTime <= 0) {
                 updateMeteors();
@@ -1676,71 +1355,44 @@ Original file line number	Diff line number	Diff line change
             updateParticles();
             updateStrangeMessages();
             updateGame();
-
-            // Отрисовка и обновление
+            
             // Отрисовка
             drawBackground();
-            updateBullets();
-            updateMeteors();
-            updateParticles();
-            drawPlayer();
-            updatePlayer();
-            updateUI();
             drawMeteors();
             drawBoss();
             drawBullets();
             drawParticles();
             drawStrangeMessages();
-
-            // Создание новых метеоритов
-            if (Math.random() < 0.02 + game.level * 0.005) {
-                createMeteor();
-            }
+            
             // Обновление HUD
             updateHUD();
-
+            
             requestAnimationFrame(gameLoop);
         }
 
-        // Начало игры
-        function startGame() {
-            console.log("Игра началась!");
         // ===== УПРАВЛЕНИЕ =====
+
         // Управление метеоритами по клику
         canvas.addEventListener('click', (e) => {
             if (!game.running) return;
-
-            // Сброс игровых переменных
-            game.running = true;
-            game.gameOver = false;
-            game.score = 0;
-            game.lives = 3;
-            game.level = 1;
+            
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-
-            // Сброс позиции игрока
-            player.x = canvas.width / 2;
-            player.y = canvas.height - 100;
+            
             // Все метеориты летят к точке клика
             meteors.forEach(meteor => {
                 meteor.targetX = x + (Math.random() - 0.5) * 100;
                 meteor.targetY = y + (Math.random() - 0.5) * 100;
             });
-
-            // Очистка объектов
-            bullets = [];
-            meteors = [];
-            particles = [];
+            
             // Эффект клика
             createParticles(x, y, '#ffffff');
         });
+
         canvas.addEventListener('touchstart', (e) => {
             if (!game.running) return;
-
-            // Создание звездного фона
-            createStars();
+            
             e.preventDefault();
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
@@ -1754,26 +1406,22 @@ Original file line number	Diff line number	Diff line change
             
             createParticles(x, y, '#ffffff');
         });
+
         // ===== УПРАВЛЕНИЕ ИГРОЙ =====
+
         function startGame() {
             console.log("Запуск игры: Метеоритный мятеж");
-
-            // Переключение экранов
+            
             startScreen.style.display = 'none';
             gameOverScreen.style.display = 'none';
             gameScreen.style.display = 'block';
-
-            // Запуск игрового цикла
+            
             initGame();
             gameLoop();
         }
 
-        // Окончание игры
-        function endGame() {
         function endGame(victory = false) {
             game.running = false;
-            game.gameOver = true;
-            finalScore.textContent = game.score;
             
             const finalMeteors = document.getElementById('finalMeteors');
             const finalTime = document.getElementById('finalTime');
@@ -1787,180 +1435,26 @@ Original file line number	Diff line number	Diff line change
             gameOverScreen.style.display = 'flex';
         }
 
-        // Возврат в меню
         function returnToMenu() {
             game.running = false;
             gameOverScreen.style.display = 'none';
-@@ -688,168 +1443,18 @@ <h2>Ваш результат: <span id="finalScore">0</span> очков</h2>
+            startScreen.style.display = 'flex';
+        }
 
         // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
 
-        // Кнопки интерфейса
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
         menuBtn.addEventListener('click', returnToMenu);
 
-        // Управление с кнопок на экране
-        let keys = {
-            left: false,
-            right: false,
-            up: false,
-            down: false
-        };
-        leftBtn.addEventListener('mousedown', () => keys.left = true);
-        leftBtn.addEventListener('mouseup', () => keys.left = false);
-        leftBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            keys.left = true;
-        });
-        leftBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            keys.left = false;
-        });
-        rightBtn.addEventListener('mousedown', () => keys.right = true);
-        rightBtn.addEventListener('mouseup', () => keys.right = false);
-        rightBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            keys.right = true;
-        });
-        rightBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            keys.right = false;
-        });
-        upBtn.addEventListener('mousedown', () => keys.up = true);
-        upBtn.addEventListener('mouseup', () => keys.up = false);
-        upBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            keys.up = true;
-        });
-        upBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            keys.up = false;
-        });
-        downBtn.addEventListener('mousedown', () => keys.down = true);
-        downBtn.addEventListener('mouseup', () => keys.down = false);
-        downBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            keys.down = true;
-        });
-        downBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            keys.down = false;
-        });
-        shootBtn.addEventListener('click', shoot);
-        shootBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            shoot();
-        });
-        // Управление с клавиатуры
-        document.addEventListener('keydown', (e) => {
-            if (!game.running) return;
-            
-            switch(e.key) {
-                case 'ArrowLeft':
-                case 'a':
-                case 'A':
-                    e.preventDefault();
-                    keys.left = true;
-                    break;
-                    
-                case 'ArrowRight':
-                case 'd':
-                case 'D':
-                    e.preventDefault();
-                    keys.right = true;
-                    break;
-                    
-                case 'ArrowUp':
-                case 'w':
-                case 'W':
-                    e.preventDefault();
-                    keys.up = true;
-                    break;
-                    
-                case 'ArrowDown':
-                case 's':
-                case 'S':
-                    e.preventDefault();
-                    keys.down = true;
-                    break;
-                    
-                case ' ':
-                case 'Enter':
-                    e.preventDefault();
-                    shoot();
-                    break;
-            }
-        });
-        document.addEventListener('keyup', (e) => {
-            switch(e.key) {
-                case 'ArrowLeft':
-                case 'a':
-                case 'A':
-                    keys.left = false;
-                    break;
-                    
-                case 'ArrowRight':
-                case 'd':
-                case 'D':
-                    keys.right = false;
-                    break;
-                    
-                case 'ArrowUp':
-                case 'w':
-                case 'W':
-                    keys.up = false;
-                    break;
-                    
-                case 'ArrowDown':
-                case 's':
-                case 'S':
-                    keys.down = false;
-                    break;
-            }
-        });
-        // Обновление движения игрока
-        function handleMovement() {
-            if (keys.left) player.x -= player.speed;
-            if (keys.right) player.x += player.speed;
-            if (keys.up) player.y -= player.speed;
-            if (keys.down) player.y += player.speed;
-        }
-        // Интеграция движения в игровой цикл
-        const originalGameLoop = gameLoop;
-        gameLoop = function() {
-            handleMovement();
-            originalGameLoop();
-        };
-        // Автоматическая стрельба при удержании кнопки
-        setInterval(() => {
-            if (game.running && player.shooting) {
-                shoot();
-            }
-        }, 100);
-        shootBtn.addEventListener('mousedown', () => player.shooting = true);
-        shootBtn.addEventListener('mouseup', () => player.shooting = false);
-        shootBtn.addEventListener('touchstart', () => player.shooting = true);
-        shootBtn.addEventListener('touchend', () => player.shooting = false);
         ability1.addEventListener('click', useAbility1);
         ability2.addEventListener('click', useAbility2);
         ability3.addEventListener('click', useAbility3);
         ability4.addEventListener('click', useAbility4);
 
-        // Инициализация
-        console.log("Космический защитник загружен!");
-        console.log("Нажмите 'НАЧАТЬ ИГРУ' для начала.");
         // ===== ИНИЦИАЛИЗАЦИЯ =====
         console.log("Метеоритный мятеж загружен!");
         console.log("Нажмите 'НАЧАТЬ БЕЗУМИЕ' чтобы играть!");
     </script>
 </body>
 </html>
-0 commit comments
-Comments
-0
- (0)
-Comment
-You're not receiving notifications from this thread.
-
-There are no files selected for viewing
