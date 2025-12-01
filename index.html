@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pac-Man Arcade</title>
+    <title>Космический защитник</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             user-select: none;
-            font-family: 'Arial', sans-serif;
         }
 
         body {
             background: #000;
             color: #fff;
+            font-family: Arial, sans-serif;
             overflow: hidden;
             height: 100vh;
-            width: 100vw;
         }
 
         #gameContainer {
@@ -30,9 +29,6 @@
 
         canvas {
             display: block;
-        }
-
-        #gameCanvas {
             background: #000;
         }
 
@@ -42,22 +38,18 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: linear-gradient(45deg, #000428, #004e92);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 100;
+            text-align: center;
+            padding: 20px;
         }
 
         #gameScreen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             display: none;
-            z-index: 50;
         }
 
         #gameOverScreen {
@@ -72,49 +64,96 @@
             justify-content: center;
             align-items: center;
             z-index: 200;
-        }
-
-        .title {
-            color: #ff0;
-            font-size: 48px;
-            margin-bottom: 30px;
             text-align: center;
         }
 
-        .subtitle {
+        h1 {
             color: #0ff;
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #0ff;
+        }
+
+        h2 {
+            color: #ff0;
             font-size: 24px;
-            margin-bottom: 40px;
-            text-align: center;
+            margin-bottom: 30px;
         }
 
         button {
-            background: linear-gradient(45deg, #f00, #ff0);
-            color: #000;
+            background: linear-gradient(45deg, #ff0000, #ff8800);
+            color: white;
             border: none;
             padding: 15px 40px;
             font-size: 20px;
-            border-radius: 25px;
+            border-radius: 10px;
             cursor: pointer;
             margin: 10px;
             font-weight: bold;
             transition: transform 0.2s;
+            min-width: 200px;
         }
 
         button:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
-        #hud {
+        #scoreDisplay {
             position: absolute;
             top: 20px;
             left: 20px;
-            color: #fff;
-            z-index: 150;
-            background: rgba(0, 0, 0, 0.7);
+            color: #0ff;
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
             padding: 10px 20px;
             border-radius: 10px;
             border: 2px solid #0ff;
+        }
+
+        #livesDisplay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #ff0;
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #ff0;
+        }
+
+        #levelDisplay {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            color: #f0f;
+            font-size: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 2px solid #f0f;
+        }
+
+        .instructions {
+            background: rgba(0, 100, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #0ff;
+            max-width: 500px;
+            margin: 20px;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: #ff0;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            margin: 8px 0;
+            color: #fff;
         }
 
         .controls {
@@ -129,516 +168,498 @@
         }
 
         .controlBtn {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            background: rgba(0, 100, 255, 0.5);
-            border: 2px solid #0ff;
-            color: #fff;
+            background: rgba(255, 100, 0, 0.7);
+            border: 3px solid #ff0;
+            color: white;
             font-size: 24px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.1s;
         }
 
         .controlBtn:active {
-            background: rgba(0, 255, 255, 0.7);
+            background: rgba(255, 200, 0, 0.9);
+            transform: scale(0.9);
         }
 
-        .instructions {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px solid #ff0;
-            max-width: 500px;
-            margin: 20px;
-        }
-
-        .instructions h3 {
-            color: #ff0;
-            margin-bottom: 10px;
-        }
-
-        .instructions p {
-            margin: 5px 0;
-            color: #fff;
+        #shootBtn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 0, 0, 0.7);
+            border-color: #f00;
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
+        <!-- Стартовый экран -->
         <div id="startScreen">
-            <h1 class="title">PAC-MAN ARCADE</h1>
-            <h2 class="subtitle">Собери все точки, избегай призраков!</h2>
+            <h1>КОСМИЧЕСКИЙ ЗАЩИТНИК</h1>
+            <h2>Защити Землю от метеоритов!</h2>
             
             <div class="instructions">
                 <h3>Как играть:</h3>
-                <p>• Используй стрелки для движения</p>
-                <p>• Собирай белые точки для очков</p>
-                <p>• Большие точки дают временную силу</p>
-                <p>• Избегай призраков или съешь их в режиме силы</p>
+                <p>• Управляй кораблём стрелками или кнопками</p>
+                <p>• Стреляй по метеоритам кнопкой "ОГОНЬ"</p>
+                <p>• Избегай столкновений с метеоритами</p>
+                <p>• Собери 1000 очков для перехода на новый уровень</p>
                 <p>• У тебя 3 жизни</p>
             </div>
             
             <button id="startBtn">НАЧАТЬ ИГРУ</button>
         </div>
         
+        <!-- Игровой экран -->
         <div id="gameScreen">
-            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            <canvas id="gameCanvas"></canvas>
             
-            <div id="hud">
-                <div>Счёт: <span id="score">0</span></div>
-                <div>Жизни: <span id="lives">3</span></div>
-                <div>Уровень: <span id="level">1</span></div>
-            </div>
+            <div id="scoreDisplay">Очки: 0</div>
+            <div id="livesDisplay">Жизни: 3</div>
+            <div id="levelDisplay">Уровень: 1</div>
             
             <div class="controls">
+                <button class="controlBtn" id="leftBtn">←</button>
                 <button class="controlBtn" id="upBtn">↑</button>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <button class="controlBtn" id="leftBtn">←</button>
-                    <button class="controlBtn" id="rightBtn">→</button>
-                </div>
                 <button class="controlBtn" id="downBtn">↓</button>
+                <button class="controlBtn" id="rightBtn">→</button>
             </div>
+            
+            <button class="controlBtn" id="shootBtn">🔥</button>
         </div>
         
+        <!-- Экран окончания игры -->
         <div id="gameOverScreen">
-            <h1 class="title">ИГРА ОКОНЧЕНА</h1>
-            <h2 class="subtitle">Финальный счёт: <span id="finalScore">0</span></h2>
+            <h1>ИГРА ОКОНЧЕНА</h1>
+            <h2>Ваш результат: <span id="finalScore">0</span> очков</h2>
             <button id="restartBtn">ИГРАТЬ СНОВА</button>
             <button id="menuBtn">В МЕНЮ</button>
         </div>
     </div>
 
     <script>
-        // Получаем элементы
+        // ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ =====
         const startScreen = document.getElementById('startScreen');
         const gameScreen = document.getElementById('gameScreen');
         const gameOverScreen = document.getElementById('gameOverScreen');
         const startBtn = document.getElementById('startBtn');
         const restartBtn = document.getElementById('restartBtn');
         const menuBtn = document.getElementById('menuBtn');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const livesDisplay = document.getElementById('livesDisplay');
+        const levelDisplay = document.getElementById('levelDisplay');
+        const finalScore = document.getElementById('finalScore');
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const scoreElement = document.getElementById('score');
-        const livesElement = document.getElementById('lives');
-        const levelElement = document.getElementById('level');
-        const finalScoreElement = document.getElementById('finalScore');
-        const upBtn = document.getElementById('upBtn');
-        const leftBtn = document.getElementById('leftBtn');
-        const downBtn = document.getElementById('downBtn');
-        const rightBtn = document.getElementById('rightBtn');
 
-        // Настройка canvas
-        function resizeCanvas() {
+        // Кнопки управления
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+        const upBtn = document.getElementById('upBtn');
+        const downBtn = document.getElementById('downBtn');
+        const shootBtn = document.getElementById('shootBtn');
+
+        // ===== НАСТРОЙКА CANVAS =====
+        function setupCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        setupCanvas();
+        window.addEventListener('resize', setupCanvas);
 
-        // Игровые константы
-        const GRID_SIZE = 19;
-        const CELL_SIZE = Math.min(canvas.width, canvas.height) / GRID_SIZE;
-        const PACMAN_SPEED = 4;
-        const GHOST_SPEED = 2;
-
-        // Игровые переменные
+        // ===== ИГРОВЫЕ ПЕРЕМЕННЫЕ =====
         let game = {
             running: false,
             score: 0,
             lives: 3,
             level: 1,
-            powerMode: false,
-            powerTimer: 0,
-            dotsLeft: 0
+            gameOver: false
         };
 
-        // Пакман
-        let pacman = {
-            x: CELL_SIZE * 9.5,
-            y: CELL_SIZE * 10.5,
-            radius: CELL_SIZE * 0.4,
-            direction: { x: 0, y: 0 },
-            nextDirection: { x: 0, y: 0 },
-            mouthAngle: 0.2,
-            mouthSpeed: 0.1
+        // ===== ИГРОВЫЕ ОБЪЕКТЫ =====
+        let player = {
+            x: canvas.width / 2,
+            y: canvas.height - 100,
+            width: 60,
+            height: 40,
+            speed: 8,
+            color: '#0ff',
+            shooting: false,
+            shootCooldown: 0,
+            shootDelay: 15
         };
 
-        // Лабиринт (1 - стена, 0 - проход, 2 - точка, 3 - большая точка)
-        let maze = [
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
-            [1,3,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,3,1],
-            [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
-            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-            [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1],
-            [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
-            [1,1,1,1,2,1,1,1,0,1,0,1,1,1,2,1,1,1,1],
-            [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
-            [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
-            [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
-            [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
-            [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
-            [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
-            [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
-            [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
-            [1,3,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,3,1],
-            [1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1],
-            [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
-            [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
-            [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-        ];
+        let bullets = [];
+        let meteors = [];
+        let particles = [];
+        let stars = [];
 
-        // Призраки
-        let ghosts = [
-            { x: CELL_SIZE * 9.5, y: CELL_SIZE * 8.5, color: '#f00', direction: { x: 1, y: 0 }, scared: false },
-            { x: CELL_SIZE * 8.5, y: CELL_SIZE * 9.5, color: '#f0f', direction: { x: -1, y: 0 }, scared: false },
-            { x: CELL_SIZE * 9.5, y: CELL_SIZE * 10.5, color: '#0ff', direction: { x: 0, y: 1 }, scared: false },
-            { x: CELL_SIZE * 10.5, y: CELL_SIZE * 9.5, color: '#ff0', direction: { x: 0, y: -1 }, scared: false }
-        ];
-
-        // Подсчёт точек
-        function countDots() {
-            let count = 0;
-            for (let row of maze) {
-                for (let cell of row) {
-                    if (cell === 2 || cell === 3) count++;
-                }
+        // ===== СОЗДАНИЕ ЗВЁЗДНОГО ФОНА =====
+        function createStars() {
+            stars = [];
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 3 + 1,
+                    speed: Math.random() * 0.5 + 0.1,
+                    brightness: Math.random() * 0.5 + 0.5
+                });
             }
-            return count;
         }
 
-        game.dotsLeft = countDots();
+        // ===== ОСНОВНЫЕ ФУНКЦИИ ИГРЫ =====
 
-        // Функции отрисовки
-        function drawMaze() {
-            ctx.fillStyle = '#000';
+        // Отрисовка фона
+        function drawBackground() {
+            // Космический фон
+            ctx.fillStyle = '#000011';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            for (let y = 0; y < maze.length; y++) {
-                for (let x = 0; x < maze[y].length; x++) {
-                    const cellX = x * CELL_SIZE;
-                    const cellY = y * CELL_SIZE;
-                    
-                    if (maze[y][x] === 1) {
-                        // Стена
-                        ctx.fillStyle = '#00f';
-                        ctx.fillRect(cellX, cellY, CELL_SIZE, CELL_SIZE);
-                        ctx.strokeStyle = '#008';
-                        ctx.strokeRect(cellX, cellY, CELL_SIZE, CELL_SIZE);
-                    } else if (maze[y][x] === 2) {
-                        // Точка
-                        ctx.fillStyle = '#fff';
-                        ctx.beginPath();
-                        ctx.arc(cellX + CELL_SIZE/2, cellY + CELL_SIZE/2, CELL_SIZE/8, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else if (maze[y][x] === 3) {
-                        // Большая точка
-                        ctx.fillStyle = '#fff';
-                        ctx.beginPath();
-                        ctx.arc(cellX + CELL_SIZE/2, cellY + CELL_SIZE/2, CELL_SIZE/4, 0, Math.PI * 2);
-                        ctx.fill();
-                        
-                        // Мерцание
-                        if (Math.sin(Date.now() / 200) > 0) {
-                            ctx.shadowColor = '#fff';
-                            ctx.shadowBlur = 10;
-                            ctx.beginPath();
-                            ctx.arc(cellX + CELL_SIZE/2, cellY + CELL_SIZE/2, CELL_SIZE/4, 0, Math.PI * 2);
-                            ctx.fill();
-                            ctx.shadowBlur = 0;
-                        }
-                    }
+            // Звезды
+            stars.forEach(star => {
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.brightness})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Движение звезд
+                star.y += star.speed;
+                if (star.y > canvas.height) {
+                    star.y = 0;
+                    star.x = Math.random() * canvas.width;
                 }
-            }
+            });
+            
+            // Земля внизу
+            ctx.fillStyle = 'rgba(0, 100, 255, 0.3)';
+            ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+            
+            // Градиент к земле
+            const gradient = ctx.createLinearGradient(0, canvas.height - 100, 0, canvas.height);
+            gradient.addColorStop(0, 'rgba(0, 50, 150, 0.1)');
+            gradient.addColorStop(1, 'rgba(0, 100, 255, 0.3)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, canvas.height - 100, canvas.width, 100);
         }
 
-        function drawPacman() {
-            // Анимация рта
-            pacman.mouthAngle += pacman.mouthSpeed;
-            if (pacman.mouthAngle > 0.8 || pacman.mouthAngle < 0.2) {
-                pacman.mouthSpeed = -pacman.mouthSpeed;
-            }
-            
+        // Отрисовка игрока
+        function drawPlayer() {
             ctx.save();
-            ctx.translate(pacman.x, pacman.y);
+            ctx.translate(player.x, player.y);
             
-            // Поворот в зависимости от направления
-            let rotation = 0;
-            if (pacman.direction.x === 1) rotation = 0;
-            else if (pacman.direction.x === -1) rotation = Math.PI;
-            else if (pacman.direction.y === -1) rotation = -Math.PI/2;
-            else if (pacman.direction.y === 1) rotation = Math.PI/2;
-            ctx.rotate(rotation);
-            
-            // Тело
-            ctx.fillStyle = '#ff0';
+            // Корпус корабля
+            ctx.fillStyle = player.color;
             ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.arc(0, 0, pacman.radius, pacman.mouthAngle, Math.PI * 2 - pacman.mouthAngle);
+            ctx.moveTo(0, -player.height/2);
+            ctx.lineTo(-player.width/2, player.height/2);
+            ctx.lineTo(player.width/2, player.height/2);
             ctx.closePath();
             ctx.fill();
             
-            // Глаз
-            ctx.fillStyle = '#000';
+            // Кабина
+            ctx.fillStyle = '#00ffff';
             ctx.beginPath();
-            ctx.arc(pacman.radius * 0.3, -pacman.radius * 0.3, pacman.radius * 0.15, 0, Math.PI * 2);
+            ctx.arc(0, -player.height/4, player.width/4, 0, Math.PI * 2);
             ctx.fill();
+            
+            // Двигатели
+            ctx.fillStyle = '#ff9900';
+            ctx.fillRect(-player.width/4, player.height/2, player.width/8, 10);
+            ctx.fillRect(player.width/8, player.height/2, player.width/8, 10);
+            
+            // Огонь из двигателей
+            if (Math.random() > 0.3) {
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(-player.width/4 - 2, player.height/2 + 10, player.width/8 + 4, 15);
+                ctx.fillRect(player.width/8 - 2, player.height/2 + 10, player.width/8 + 4, 15);
+            }
             
             ctx.restore();
         }
 
-        function drawGhosts() {
-            ghosts.forEach(ghost => {
+        // Создание пули
+        function shoot() {
+            if (player.shootCooldown <= 0) {
+                bullets.push({
+                    x: player.x,
+                    y: player.y - player.height/2,
+                    width: 5,
+                    height: 15,
+                    speed: 12,
+                    color: '#ffff00'
+                });
+                player.shootCooldown = player.shootDelay;
+            }
+        }
+
+        // Отрисовка и обновление пуль
+        function updateBullets() {
+            // Обновляем пули
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const bullet = bullets[i];
+                bullet.y -= bullet.speed;
+                
+                // Удаляем пули за экраном
+                if (bullet.y < -20) {
+                    bullets.splice(i, 1);
+                    continue;
+                }
+                
+                // Отрисовка пули
+                ctx.fillStyle = bullet.color;
+                ctx.fillRect(bullet.x - bullet.width/2, bullet.y, bullet.width, bullet.height);
+                
+                // Свечение пули
+                ctx.shadowColor = bullet.color;
+                ctx.shadowBlur = 10;
+                ctx.fillRect(bullet.x - bullet.width/2, bullet.y, bullet.width, bullet.height);
+                ctx.shadowBlur = 0;
+                
+                // Проверка столкновений с метеоритами
+                for (let j = meteors.length - 1; j >= 0; j--) {
+                    const meteor = meteors[j];
+                    if (checkCollision(bullet, meteor)) {
+                        // Создаем взрыв
+                        createExplosion(meteor.x, meteor.y, meteor.color);
+                        
+                        // Удаляем метеорит и пулю
+                        meteors.splice(j, 1);
+                        bullets.splice(i, 1);
+                        
+                        // Добавляем очки
+                        game.score += 10 * game.level;
+                        
+                        break;
+                    }
+                }
+            }
+            
+            // Обновляем кулдаун стрельбы
+            if (player.shootCooldown > 0) {
+                player.shootCooldown--;
+            }
+        }
+
+        // Создание метеоритов
+        function createMeteor() {
+            const size = Math.random() * 40 + 20;
+            meteors.push({
+                x: Math.random() * (canvas.width - size * 2) + size,
+                y: -size,
+                width: size,
+                height: size,
+                speed: Math.random() * 3 + 1 + game.level * 0.5,
+                color: `hsl(${Math.random() * 60 + 20}, 70%, 50%)`,
+                rotation: Math.random() * Math.PI * 2,
+                rotationSpeed: (Math.random() - 0.5) * 0.1
+            });
+        }
+
+        // Отрисовка и обновление метеоритов
+        function updateMeteors() {
+            for (let i = meteors.length - 1; i >= 0; i--) {
+                const meteor = meteors[i];
+                
+                // Движение метеорита
+                meteor.y += meteor.speed;
+                meteor.rotation += meteor.rotationSpeed;
+                
+                // Удаление метеоритов за экраном
+                if (meteor.y > canvas.height + meteor.height) {
+                    meteors.splice(i, 1);
+                    continue;
+                }
+                
+                // Отрисовка метеорита
                 ctx.save();
-                ctx.translate(ghost.x, ghost.y);
+                ctx.translate(meteor.x, meteor.y);
+                ctx.rotate(meteor.rotation);
                 
-                // Тело
-                ctx.fillStyle = ghost.scared ? '#00f' : ghost.color;
+                // Форма метеорита
+                ctx.fillStyle = meteor.color;
                 ctx.beginPath();
-                ctx.arc(0, 0, pacman.radius, 0, Math.PI * 2);
+                ctx.moveTo(0, -meteor.height/2);
+                for (let j = 0; j < 8; j++) {
+                    const angle = (j / 8) * Math.PI * 2;
+                    const radius = meteor.width/2 * (0.7 + Math.random() * 0.3);
+                    const x = Math.cos(angle) * radius;
+                    const y = Math.sin(angle) * radius;
+                    if (j === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.closePath();
                 ctx.fill();
                 
-                // Глаза
-                ctx.fillStyle = '#fff';
+                // Текстура метеорита
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
                 ctx.beginPath();
-                ctx.arc(-pacman.radius * 0.3, -pacman.radius * 0.2, pacman.radius * 0.2, 0, Math.PI * 2);
-                ctx.arc(pacman.radius * 0.3, -pacman.radius * 0.2, pacman.radius * 0.2, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Зрачки
-                ctx.fillStyle = '#000';
-                ctx.beginPath();
-                ctx.arc(-pacman.radius * 0.3, -pacman.radius * 0.2, pacman.radius * 0.1, 0, Math.PI * 2);
-                ctx.arc(pacman.radius * 0.3, -pacman.radius * 0.2, pacman.radius * 0.1, 0, Math.PI * 2);
+                ctx.arc(-meteor.width/4, -meteor.height/4, meteor.width/8, 0, Math.PI * 2);
                 ctx.fill();
                 
                 ctx.restore();
-            });
-        }
-
-        // Обновление игры
-        function updatePacman() {
-            // Пытаемся изменить направление
-            const gridX = Math.floor(pacman.x / CELL_SIZE);
-            const gridY = Math.floor(pacman.y / CELL_SIZE);
-            
-            // Проверяем, можно ли повернуть в желаемом направлении
-            if (pacman.nextDirection.x !== 0 || pacman.nextDirection.y !== 0) {
-                const nextGridX = gridX + pacman.nextDirection.x;
-                const nextGridY = gridY + pacman.nextDirection.y;
                 
-                if (nextGridX >= 0 && nextGridX < GRID_SIZE && 
-                    nextGridY >= 0 && nextGridY < maze.length &&
-                    maze[nextGridY][nextGridX] !== 1) {
-                    pacman.direction = { ...pacman.nextDirection };
-                }
-            }
-            
-            // Движение
-            const newX = pacman.x + pacman.direction.x * PACMAN_SPEED;
-            const newY = pacman.y + pacman.direction.y * PACMAN_SPEED;
-            
-            // Проверка стен
-            const newGridX = Math.floor(newX / CELL_SIZE);
-            const newGridY = Math.floor(newY / CELL_SIZE);
-            
-            if (newGridX >= 0 && newGridX < GRID_SIZE && 
-                newGridY >= 0 && newGridY < maze.length &&
-                maze[newGridY][newGridX] !== 1) {
-                pacman.x = newX;
-                pacman.y = newY;
-            }
-            
-            // Телепортация через туннели
-            if (pacman.x < 0) pacman.x = canvas.width;
-            if (pacman.x > canvas.width) pacman.x = 0;
-            
-            // Сбор точек
-            const centerGridX = Math.floor((pacman.x + CELL_SIZE/2) / CELL_SIZE);
-            const centerGridY = Math.floor((pacman.y + CELL_SIZE/2) / CELL_SIZE);
-            
-            if (centerGridX >= 0 && centerGridX < GRID_SIZE && 
-                centerGridY >= 0 && centerGridY < maze.length) {
-                
-                if (maze[centerGridY][centerGridX] === 2) {
-                    maze[centerGridY][centerGridX] = 0;
-                    game.score += 10;
-                    game.dotsLeft--;
-                } else if (maze[centerGridY][centerGridX] === 3) {
-                    maze[centerGridY][centerGridX] = 0;
-                    game.score += 50;
-                    game.dotsLeft--;
-                    game.powerMode = true;
-                    game.powerTimer = 300;
+                // Проверка столкновения с игроком
+                if (checkCollision(player, meteor)) {
+                    // Создаем взрыв
+                    createExplosion(meteor.x, meteor.y, '#ff0000');
+                    createExplosion(player.x, player.y, player.color);
                     
-                    // Делаем всех призраков испуганными
-                    ghosts.forEach(ghost => ghost.scared = true);
-                }
-            }
-        }
-
-        function updateGhosts() {
-            ghosts.forEach(ghost => {
-                // Обновление режима испуга
-                if (game.powerMode) {
-                    if (ghost.scared && game.powerTimer <= 0) {
-                        ghost.scared = false;
+                    // Удаляем метеорит
+                    meteors.splice(i, 1);
+                    
+                    // Отнимаем жизнь
+                    game.lives--;
+                    
+                    // Мигание игрока
+                    player.color = '#ff0000';
+                    setTimeout(() => {
+                        player.color = '#0ff';
+                    }, 200);
+                    
+                    // Проверка окончания игры
+                    if (game.lives <= 0) {
+                        endGame();
                     }
                 }
-                
-                // Простое движение призраков
-                const newX = ghost.x + ghost.direction.x * GHOST_SPEED;
-                const newY = ghost.y + ghost.direction.y * GHOST_SPEED;
-                
-                const gridX = Math.floor(newX / CELL_SIZE);
-                const gridY = Math.floor(newY / CELL_SIZE);
-                
-                // Проверяем, можно ли двигаться дальше
-                if (gridX >= 0 && gridX < GRID_SIZE && 
-                    gridY >= 0 && gridY < maze.length &&
-                    maze[gridY][gridX] !== 1) {
-                    ghost.x = newX;
-                    ghost.y = newY;
-                } else {
-                    // Меняем направление при столкновении со стеной
-                    const directions = [
-                        { x: 1, y: 0 }, { x: -1, y: 0 },
-                        { x: 0, y: 1 }, { x: 0, y: -1 }
-                    ];
-                    
-                    // Исключаем обратное направление
-                    const validDirections = directions.filter(dir => 
-                        !(dir.x === -ghost.direction.x && dir.y === -ghost.direction.y)
-                    );
-                    
-                    // Выбираем случайное новое направление
-                    const newDir = validDirections[Math.floor(Math.random() * validDirections.length)];
-                    ghost.direction = newDir;
-                }
-                
-                // Телепортация через туннели
-                if (ghost.x < 0) ghost.x = canvas.width;
-                if (ghost.x > canvas.width) ghost.x = 0;
-                
-                // Проверка столкновения с Пакманом
-                const dx = pacman.x - ghost.x;
-                const dy = pacman.y - ghost.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < pacman.radius * 2) {
-                    if (ghost.scared) {
-                        // Пакман съедает призрака
-                        ghost.x = CELL_SIZE * 9.5;
-                        ghost.y = CELL_SIZE * 8.5;
-                        ghost.scared = false;
-                        game.score += 200;
-                    } else {
-                        // Призрак съедает Пакмана
-                        game.lives--;
-                        resetPositions();
-                        
-                        if (game.lives <= 0) {
-                            gameOver();
-                        }
-                    }
-                }
-            });
+            }
         }
 
-        function resetPositions() {
-            pacman.x = CELL_SIZE * 9.5;
-            pacman.y = CELL_SIZE * 10.5;
-            pacman.direction = { x: 0, y: 0 };
-            pacman.nextDirection = { x: 0, y: 0 };
-            
-            ghosts[0] = { x: CELL_SIZE * 9.5, y: CELL_SIZE * 8.5, color: '#f00', direction: { x: 1, y: 0 }, scared: false };
-            ghosts[1] = { x: CELL_SIZE * 8.5, y: CELL_SIZE * 9.5, color: '#f0f', direction: { x: -1, y: 0 }, scared: false };
-            ghosts[2] = { x: CELL_SIZE * 9.5, y: CELL_SIZE * 10.5, color: '#0ff', direction: { x: 0, y: 1 }, scared: false };
-            ghosts[3] = { x: CELL_SIZE * 10.5, y: CELL_SIZE * 9.5, color: '#ff0', direction: { x: 0, y: -1 }, scared: false };
+        // Создание взрыва
+        function createExplosion(x, y, color) {
+            for (let i = 0; i < 20; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    size: Math.random() * 8 + 2,
+                    speedX: Math.random() * 10 - 5,
+                    speedY: Math.random() * 10 - 5,
+                    color: color,
+                    life: 30
+                });
+            }
         }
 
+        // Обновление частиц
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                
+                particle.x += particle.speedX;
+                particle.y += particle.speedY;
+                particle.life--;
+                
+                if (particle.life <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+                
+                // Отрисовка частицы
+                ctx.globalAlpha = particle.life / 30;
+                ctx.fillStyle = particle.color;
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        // Проверка столкновений
+        function checkCollision(obj1, obj2) {
+            return obj1.x - obj1.width/2 < obj2.x + obj2.width/2 &&
+                   obj1.x + obj1.width/2 > obj2.x - obj2.width/2 &&
+                   obj1.y - obj1.height/2 < obj2.y + obj2.height/2 &&
+                   obj1.y + obj1.height/2 > obj2.y - obj2.height/2;
+        }
+
+        // Обновление UI
         function updateUI() {
-            scoreElement.textContent = game.score;
-            livesElement.textContent = game.lives;
-            levelElement.textContent = game.level;
+            scoreDisplay.textContent = `Очки: ${game.score}`;
+            livesDisplay.textContent = `Жизни: ${game.lives}`;
+            levelDisplay.textContent = `Уровень: ${game.level}`;
             
-            // Таймер режима силы
-            if (game.powerMode) {
-                game.powerTimer--;
-                if (game.powerTimer <= 0) {
-                    game.powerMode = false;
-                    ghosts.forEach(ghost => ghost.scared = false);
-                }
-            }
-            
-            // Проверка завершения уровня
-            if (game.dotsLeft <= 0) {
+            // Проверка перехода на новый уровень
+            if (game.score >= game.level * 1000) {
                 game.level++;
-                resetMaze();
-                resetPositions();
-                game.dotsLeft = countDots();
+                showLevelUp();
             }
         }
 
-        function resetMaze() {
-            maze = [
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
-                [1,3,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,3,1],
-                [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
-                [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-                [1,2,1,1,2,1,2,1,1,1,1,1,2,1,2,1,1,2,1],
-                [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
-                [1,1,1,1,2,1,1,1,0,1,0,1,1,1,2,1,1,1,1],
-                [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
-                [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
-                [0,0,0,0,2,0,0,1,0,0,0,1,0,0,2,0,0,0,0],
-                [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
-                [0,0,0,1,2,1,0,0,0,0,0,0,0,1,2,1,0,0,0],
-                [1,1,1,1,2,1,0,1,1,1,1,1,0,1,2,1,1,1,1],
-                [1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1],
-                [1,2,1,1,2,1,1,1,2,1,2,1,1,1,2,1,1,2,1],
-                [1,3,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,3,1],
-                [1,1,2,1,2,1,2,1,1,1,1,1,2,1,2,1,2,1,1],
-                [1,2,2,2,2,1,2,2,2,1,2,2,2,1,2,2,2,2,1],
-                [1,2,1,1,1,1,1,1,2,1,2,1,1,1,1,1,1,2,1],
-                [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-            ];
+        // Показ сообщения о новом уровне
+        function showLevelUp() {
+            ctx.save();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(canvas.width/2 - 200, canvas.height/2 - 50, 400, 100);
+            
+            ctx.fillStyle = '#ffff00';
+            ctx.font = 'bold 36px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`УРОВЕНЬ ${game.level}!`, canvas.width/2, canvas.height/2);
+            
+            ctx.restore();
         }
 
+        // Управление игроком
+        function updatePlayer() {
+            // Ограничение движения в пределах экрана
+            if (player.x - player.width/2 < 0) player.x = player.width/2;
+            if (player.x + player.width/2 > canvas.width) player.x = canvas.width - player.width/2;
+            if (player.y - player.height/2 < 0) player.y = player.height/2;
+            if (player.y + player.height/2 > canvas.height) player.y = canvas.height - player.height/2;
+        }
+
+        // Игровой цикл
         function gameLoop() {
-            if (!game.running) return;
+            if (!game.running || game.gameOver) return;
             
-            updatePacman();
-            updateGhosts();
+            // Очистка экрана
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Отрисовка и обновление
+            drawBackground();
+            updateBullets();
+            updateMeteors();
+            updateParticles();
+            drawPlayer();
+            updatePlayer();
             updateUI();
             
-            drawMaze();
-            drawPacman();
-            drawGhosts();
+            // Создание новых метеоритов
+            if (Math.random() < 0.02 + game.level * 0.005) {
+                createMeteor();
+            }
             
             requestAnimationFrame(gameLoop);
         }
 
+        // Начало игры
         function startGame() {
-            console.log("Игра начинается!");
+            console.log("Игра началась!");
             
-            // Сброс игры
+            // Сброс игровых переменных
             game.running = true;
+            game.gameOver = false;
             game.score = 0;
             game.lives = 3;
             game.level = 1;
-            game.powerMode = false;
-            game.powerTimer = 0;
             
-            resetMaze();
-            resetPositions();
-            game.dotsLeft = countDots();
+            // Сброс позиции игрока
+            player.x = canvas.width / 2;
+            player.y = canvas.height - 100;
+            
+            // Очистка объектов
+            bullets = [];
+            meteors = [];
+            particles = [];
+            
+            // Создание звездного фона
+            createStars();
             
             // Переключение экранов
             startScreen.style.display = 'none';
@@ -649,71 +670,186 @@
             gameLoop();
         }
 
-        function gameOver() {
+        // Окончание игры
+        function endGame() {
             game.running = false;
-            finalScoreElement.textContent = game.score;
+            game.gameOver = true;
+            finalScore.textContent = game.score;
             gameScreen.style.display = 'none';
             gameOverScreen.style.display = 'flex';
         }
 
+        // Возврат в меню
         function returnToMenu() {
             game.running = false;
             gameOverScreen.style.display = 'none';
             startScreen.style.display = 'flex';
         }
 
-        // Обработчики событий
+        // ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
+
+        // Кнопки интерфейса
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
         menuBtn.addEventListener('click', returnToMenu);
 
-        // Управление
-        function setDirection(dx, dy) {
-            pacman.nextDirection = { x: dx, y: dy };
-        }
+        // Управление с кнопок на экране
+        let keys = {
+            left: false,
+            right: false,
+            up: false,
+            down: false
+        };
 
-        upBtn.addEventListener('click', () => setDirection(0, -1));
-        downBtn.addEventListener('click', () => setDirection(0, 1));
-        leftBtn.addEventListener('click', () => setDirection(-1, 0));
-        rightBtn.addEventListener('click', () => setDirection(1, 0));
+        leftBtn.addEventListener('mousedown', () => keys.left = true);
+        leftBtn.addEventListener('mouseup', () => keys.left = false);
+        leftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.left = true;
+        });
+        leftBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.left = false;
+        });
+
+        rightBtn.addEventListener('mousedown', () => keys.right = true);
+        rightBtn.addEventListener('mouseup', () => keys.right = false);
+        rightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.right = true;
+        });
+        rightBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.right = false;
+        });
+
+        upBtn.addEventListener('mousedown', () => keys.up = true);
+        upBtn.addEventListener('mouseup', () => keys.up = false);
+        upBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.up = true;
+        });
+        upBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.up = false;
+        });
+
+        downBtn.addEventListener('mousedown', () => keys.down = true);
+        downBtn.addEventListener('mouseup', () => keys.down = false);
+        downBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keys.down = true;
+        });
+        downBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            keys.down = false;
+        });
+
+        shootBtn.addEventListener('click', shoot);
+        shootBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            shoot();
+        });
 
         // Управление с клавиатуры
         document.addEventListener('keydown', (e) => {
             if (!game.running) return;
             
             switch(e.key) {
-                case 'ArrowUp':
-                case 'w':
-                case 'W':
-                    e.preventDefault();
-                    setDirection(0, -1);
-                    break;
-                    
-                case 'ArrowDown':
-                case 's':
-                case 'S':
-                    e.preventDefault();
-                    setDirection(0, 1);
-                    break;
-                    
                 case 'ArrowLeft':
                 case 'a':
                 case 'A':
                     e.preventDefault();
-                    setDirection(-1, 0);
+                    keys.left = true;
                     break;
                     
                 case 'ArrowRight':
                 case 'd':
                 case 'D':
                     e.preventDefault();
-                    setDirection(1, 0);
+                    keys.right = true;
+                    break;
+                    
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    e.preventDefault();
+                    keys.up = true;
+                    break;
+                    
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    e.preventDefault();
+                    keys.down = true;
+                    break;
+                    
+                case ' ':
+                case 'Enter':
+                    e.preventDefault();
+                    shoot();
                     break;
             }
         });
 
+        document.addEventListener('keyup', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    keys.left = false;
+                    break;
+                    
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    keys.right = false;
+                    break;
+                    
+                case 'ArrowUp':
+                case 'w':
+                case 'W':
+                    keys.up = false;
+                    break;
+                    
+                case 'ArrowDown':
+                case 's':
+                case 'S':
+                    keys.down = false;
+                    break;
+            }
+        });
+
+        // Обновление движения игрока
+        function handleMovement() {
+            if (keys.left) player.x -= player.speed;
+            if (keys.right) player.x += player.speed;
+            if (keys.up) player.y -= player.speed;
+            if (keys.down) player.y += player.speed;
+        }
+
+        // Интеграция движения в игровой цикл
+        const originalGameLoop = gameLoop;
+        gameLoop = function() {
+            handleMovement();
+            originalGameLoop();
+        };
+
+        // Автоматическая стрельба при удержании кнопки
+        setInterval(() => {
+            if (game.running && player.shooting) {
+                shoot();
+            }
+        }, 100);
+
+        shootBtn.addEventListener('mousedown', () => player.shooting = true);
+        shootBtn.addEventListener('mouseup', () => player.shooting = false);
+        shootBtn.addEventListener('touchstart', () => player.shooting = true);
+        shootBtn.addEventListener('touchend', () => player.shooting = false);
+
         // Инициализация
-        console.log("Игра загружена. Нажмите 'НАЧАТЬ ИГРУ' для начала.");
+        console.log("Космический защитник загружен!");
+        console.log("Нажмите 'НАЧАТЬ ИГРУ' для начала.");
     </script>
 </body>
 </html>
