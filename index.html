@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAC-MAN: ZOMBIE PSYCHO EDITION</title>
+    <title>Pac-Man: Dark Dimension</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -11,14 +11,13 @@
             padding: 0;
             box-sizing: border-box;
             user-select: none;
-            font-family: 'Comic Sans MS', 'Wingdings', 'Papyrus', cursive;
+            font-family: 'Arial', sans-serif;
         }
 
         body {
             background: #000;
-            color: #FF00FF;
+            color: #fff;
             overflow: hidden;
-            cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="15" fill="lime"/><text x="8" y="24" font-size="16">👁️</text></svg>'), auto;
         }
 
         #gameContainer {
@@ -43,37 +42,27 @@
             left: 20px;
             z-index: 100;
             background: rgba(0, 0, 0, 0.8);
-            padding: 20px 30px;
-            border-radius: 20px;
-            border: 5px dashed #00FFFF;
-            box-shadow: 0 0 30px #FF00FF;
-            transform: rotate(-2deg);
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 2px solid #00ffff;
         }
 
         #score {
-            font-size: 36px;
-            color: #FFFF00;
-            text-shadow: 0 0 15px #FF0000, 0 0 30px #FF4500;
-            margin-bottom: 10px;
-            animation: scorePulse 1s infinite;
-        }
-
-        @keyframes scorePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            font-size: 24px;
+            color: #ffff00;
+            font-weight: bold;
         }
 
         #lives {
-            font-size: 28px;
-            color: #00FF00;
-            text-shadow: 0 0 10px #00FF00;
+            font-size: 20px;
+            color: #ff0000;
+            margin-top: 5px;
         }
 
         #level {
-            font-size: 24px;
-            color: #FF00FF;
-            margin-top: 10px;
-            text-shadow: 0 0 10px #FF00FF;
+            font-size: 18px;
+            color: #00ff00;
+            margin-top: 5px;
         }
 
         #rageMeter {
@@ -81,34 +70,35 @@
             top: 20px;
             right: 20px;
             background: rgba(0, 0, 0, 0.8);
-            padding: 20px 30px;
-            border-radius: 20px;
-            border: 5px dotted #FF0000;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ff0000;
             z-index: 100;
-            transform: rotate(2deg);
+            width: 250px;
         }
 
         #rageText {
-            font-size: 24px;
-            color: #FF0000;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px #FF0000;
+            font-size: 16px;
+            color: #ff0000;
+            margin-bottom: 8px;
+            text-align: center;
         }
 
         #rageBar {
-            width: 200px;
-            height: 30px;
+            width: 100%;
+            height: 20px;
             background: #333;
-            border-radius: 15px;
+            border-radius: 10px;
             overflow: hidden;
-            border: 3px solid #FF4500;
+            border: 1px solid #444;
         }
 
         #rageFill {
             height: 100%;
-            background: linear-gradient(90deg, #00FF00, #FFFF00, #FF0000);
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000);
             width: 0%;
-            transition: width 0.5s;
+            transition: width 0.3s;
+            border-radius: 10px;
         }
 
         #gameOver {
@@ -116,64 +106,45 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            padding: 60px;
-            border-radius: 50px;
-            border: 10px solid #FF0000;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 15px;
+            border: 3px solid #ff0000;
             text-align: center;
             z-index: 200;
             display: none;
             width: 90%;
-            max-width: 600px;
-            box-shadow: 0 0 100px #FF0000;
-            animation: gameOverShake 0.5s infinite;
-        }
-
-        @keyframes gameOverShake {
-            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
-            25% { transform: translate(-50%, -50%) rotate(5deg); }
-            50% { transform: translate(-50%, -50%) rotate(-5deg); }
-            75% { transform: translate(-50%, -50%) rotate(5deg); }
+            max-width: 500px;
         }
 
         #gameOver h1 {
-            font-size: 72px;
-            color: #FF0000;
-            margin-bottom: 30px;
-            text-shadow: 0 0 30px #FF0000;
+            color: #ff0000;
+            font-size: 36px;
+            margin-bottom: 20px;
         }
 
         #finalScore {
-            font-size: 80px;
-            color: #FFFF00;
-            margin: 40px 0;
-            text-shadow: 0 0 20px #FFFF00;
-            animation: finalScoreSpin 3s infinite linear;
-        }
-
-        @keyframes finalScoreSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            font-size: 48px;
+            color: #ffff00;
+            margin: 20px 0;
+            font-weight: bold;
         }
 
         #restartBtn {
-            background: linear-gradient(45deg, #FF00FF, #00FFFF);
-            color: black;
+            background: linear-gradient(45deg, #ff0000, #8b0000);
+            color: white;
             border: none;
-            padding: 25px 60px;
-            font-size: 32px;
-            border-radius: 50px;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 25px;
             cursor: pointer;
+            margin-top: 20px;
             font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            transition: all 0.3s;
-            box-shadow: 0 0 50px #FF00FF;
+            transition: transform 0.2s;
         }
 
         #restartBtn:hover {
-            transform: scale(1.2) rotate(10deg);
-            box-shadow: 0 0 80px #00FFFF;
+            transform: scale(1.05);
         }
 
         #startScreen {
@@ -182,7 +153,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, #000000 0%, #330033 100%);
+            background: radial-gradient(circle, #000000 0%, #001122 100%);
             z-index: 300;
             display: flex;
             flex-direction: column;
@@ -193,173 +164,134 @@
         }
 
         #startScreen h1 {
-            font-size: 96px;
-            color: #FFFF00;
-            text-shadow: 0 0 50px #FF0000, 0 0 100px #FF4500;
-            margin-bottom: 40px;
-            animation: titleFloat 3s infinite ease-in-out;
-        }
-
-        @keyframes titleFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-30px); }
+            font-size: 48px;
+            color: #ffff00;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #ffff00;
         }
 
         #startScreen h2 {
-            color: #00FFFF;
-            font-size: 48px;
-            margin-bottom: 40px;
-            text-shadow: 0 0 30px #00FFFF;
-            transform: rotate(-5deg);
+            color: #00ffff;
+            font-size: 24px;
+            margin-bottom: 30px;
         }
 
-        .crazy-rules {
-            background: rgba(255, 0, 255, 0.2);
-            padding: 30px;
-            border-radius: 30px;
-            border: 5px solid #00FF00;
-            max-width: 800px;
-            margin: 30px 0;
-            transform: rotate(3deg);
+        .rules {
+            background: rgba(0, 100, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #00ffff;
+            max-width: 600px;
+            margin: 20px 0;
         }
 
-        .crazy-rules h3 {
-            color: #FF0000;
-            font-size: 36px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 15px #FF0000;
-        }
-
-        .crazy-rules p {
-            color: #FFFFFF;
+        .rules h3 {
+            color: #ffff00;
+            margin-bottom: 15px;
             font-size: 20px;
-            margin: 15px 0;
+        }
+
+        .rules p {
+            color: #ffffff;
+            margin: 8px 0;
             text-align: left;
-            padding-left: 20px;
+            padding-left: 10px;
+            line-height: 1.4;
         }
 
         #startBtn {
-            background: linear-gradient(45deg, #FF0000, #00FF00, #0000FF);
-            color: white;
+            background: linear-gradient(45deg, #ff0000, #ffff00);
+            color: black;
             border: none;
-            padding: 30px 80px;
-            font-size: 40px;
-            border-radius: 100px;
+            padding: 20px 50px;
+            font-size: 24px;
+            border-radius: 25px;
             cursor: pointer;
-            margin-top: 50px;
+            margin-top: 30px;
             font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            box-shadow: 0 0 100px rgba(255, 0, 0, 0.7);
-            transition: all 0.3s;
-            animation: startBtnPulse 2s infinite;
-        }
-
-        @keyframes startBtnPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            transition: transform 0.2s;
         }
 
         #startBtn:hover {
-            transform: scale(1.3) rotate(180deg);
-            box-shadow: 0 0 150px rgba(0, 255, 0, 1);
+            transform: scale(1.1);
         }
 
         .controls {
             position: absolute;
-            bottom: 40px;
+            bottom: 30px;
             left: 0;
             right: 0;
             display: flex;
             justify-content: center;
-            gap: 30px;
+            gap: 20px;
             z-index: 100;
         }
 
         .controlBtn {
-            width: 100px;
-            height: 100px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            border: 6px solid #FFFF00;
-            background: linear-gradient(45deg, #FF00FF, #FF4500);
+            border: 3px solid #00ffff;
+            background: rgba(0, 100, 255, 0.3);
             color: white;
-            font-size: 40px;
+            font-size: 24px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 40px #FF00FF;
             transition: all 0.1s;
-            transform: rotate(45deg);
         }
 
         .controlBtn:active {
-            transform: scale(0.8) rotate(135deg);
-            background: linear-gradient(45deg, #00FFFF, #00FF00);
+            transform: scale(0.9);
+            background: rgba(0, 255, 255, 0.5);
         }
 
         #powerBtn {
             position: absolute;
-            bottom: 40px;
-            right: 40px;
-            background: linear-gradient(45deg, #00FF00, #008000);
-            border-color: #00FF00;
-            transform: rotate(-45deg);
+            bottom: 30px;
+            right: 30px;
+            background: rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
         }
 
-        .crazy-message {
+        .message {
             position: absolute;
-            color: #FFFF00;
-            font-size: 32px;
-            text-shadow: 0 0 20px #FF0000;
+            color: #ffff00;
+            font-size: 20px;
+            text-shadow: 0 0 5px #000;
             z-index: 150;
             pointer-events: none;
-            animation: crazyFloat 3s forwards;
+            animation: messageFloat 2s forwards;
             text-align: center;
         }
 
-        @keyframes crazyFloat {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
+        @keyframes messageFloat {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
         }
 
-        .teleport-effect {
+        #insanityLevel {
             position: absolute;
-            width: 100px;
-            height: 100px;
-            border: 10px dotted #00FFFF;
-            border-radius: 50%;
-            animation: teleportSpin 1s infinite linear;
-            pointer-events: none;
-            z-index: 50;
-        }
-
-        @keyframes teleportSpin {
-            0% { transform: scale(0.5) rotate(0deg); opacity: 1; }
-            100% { transform: scale(2) rotate(360deg); opacity: 0; }
-        }
-
-        .insanity-level {
-            position: absolute;
-            bottom: 20px;
+            bottom: 120px;
             left: 20px;
-            font-size: 24px;
-            color: #FF00FF;
+            font-size: 16px;
+            color: #ff00ff;
             background: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 15px;
-            border: 3px solid #FF00FF;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #ff00ff;
         }
 
         #mapIndicator {
             position: absolute;
             top: 150px;
             right: 20px;
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             background: rgba(0, 0, 0, 0.7);
-            border: 5px solid #00FFFF;
-            border-radius: 50%;
+            border: 2px solid #00ffff;
+            border-radius: 5px;
             z-index: 90;
             pointer-events: none;
             overflow: hidden;
@@ -367,22 +299,17 @@
 
         @media (max-width: 768px) {
             .controlBtn {
-                width: 80px;
-                height: 80px;
-                font-size: 30px;
+                width: 60px;
+                height: 60px;
+                font-size: 20px;
             }
             
             #startScreen h1 {
-                font-size: 48px;
+                font-size: 36px;
             }
             
-            #startScreen h2 {
-                font-size: 24px;
-            }
-            
-            .crazy-rules {
-                padding: 15px;
-                font-size: 14px;
+            #rageMeter {
+                width: 200px;
             }
         }
     </style>
@@ -392,13 +319,13 @@
         <canvas id="gameCanvas"></canvas>
         
         <div id="hud">
-            <div id="score">СЧЁТ: 0</div>
-            <div id="lives">ЖИЗНИ: ❤️❤️❤️</div>
-            <div id="level">УРОВЕНЬ БЕЗУМИЯ: 1</div>
+            <div id="score">Счет: 0</div>
+            <div id="lives">Жизни: 3</div>
+            <div id="level">Уровень: 1</div>
         </div>
         
         <div id="rageMeter">
-            <div id="rageText">⚡ ШКАЛА ЯРОСТИ ⚡</div>
+            <div id="rageText">Уровень стресса</div>
             <div id="rageBar">
                 <div id="rageFill"></div>
             </div>
@@ -406,47 +333,49 @@
         
         <div id="mapIndicator"></div>
         
-        <div class="insanity-level" id="insanityLevel">БЕЗУМИЕ: 0%</div>
+        <div id="insanityLevel">Безумие: 0%</div>
         
         <div id="gameOver">
-            <h1>ВАШ МОНИТОР СЛОМАН</h1>
-            <div style="color: #AAA; font-size: 24px; margin-bottom: 30px;">
-                Вы достигли максимального уровня ярости и сломали экран!
+            <h1>Игра окончена</h1>
+            <div style="color: #ccc; margin-bottom: 20px;">
+                Вы достигли предела
             </div>
             <div id="finalScore">0</div>
-            <div style="color: #00FF00; margin: 30px 0; font-size: 28px;">
-                Уровень безумия: <span id="finalInsanity">0%</span>
-            </div>
-            <button id="restartBtn">СЛОМАТЬ ЕЩЁ РАЗ</button>
+            <button id="restartBtn">Начать заново</button>
         </div>
         
         <div id="startScreen">
             <h1>PAC-MAN</h1>
-            <h2>PSYCHO ZOMBIE EDITION</h2>
+            <h2>Dark Dimension</h2>
             
-            <div class="crazy-rules">
-                <h3>⚠️ ПРАВИЛА, КОТОРЫХ НЕТ:</h3>
-                <p>• 🟡 Ешь точки, но они иногда кусаются</p>
-                <p>• 👻 Убегай от призраков, которые телепортируются</p>
-                <p>• 💀 Избегай зомби-шаров, они отскакивают нелогично</p>
-                <p>• 🚀 Летающие тарелки меняют гравитацию</p>
-                <p>• 🔄 Порталы ведут в случайные места</p>
-                <p>• ⚡ Энерджайзеры делают всё наоборот</p>
-                <p>• 🤯 Чем выше уровень, тем безумнее физика</p>
-                <p>• 💢 Шкала ярости: когда заполнится - игра сломается</p>
+            <div class="rules">
+                <h3>Цель игры:</h3>
+                <p>• Собирайте точки в огромном лабиринте</p>
+                <p>• Избегайте призраков и других врагов</p>
+                <p>• Используйте энерджайзеры для получения преимуществ</p>
+                <p>• Доберитесь до следующего уровня</p>
+                <p>• Не позволяйте стрессу достигнуть максимума</p>
+                
+                <h3>Особенности:</h3>
+                <p>• Динамически меняющийся лабиринт</p>
+                <p>• Враги с разным поведением</p>
+                <p>• Порталы для телепортации</p>
+                <p>• Усиления и ловушки</p>
             </div>
             
-            <button id="startBtn">НАЧАТЬ БЕЗУМИЕ</button>
+            <button id="startBtn">Начать игру</button>
         </div>
         
         <div class="controls">
             <button class="controlBtn" id="upBtn">↑</button>
-            <button class="controlBtn" id="leftBtn">←</button>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="controlBtn" id="leftBtn">←</button>
+                <button class="controlBtn" id="rightBtn">→</button>
+            </div>
             <button class="controlBtn" id="downBtn">↓</button>
-            <button class="controlBtn" id="rightBtn">→</button>
         </div>
         
-        <button class="controlBtn" id="powerBtn">⚡</button>
+        <button class="controlBtn" id="powerBtn">PWR</button>
     </div>
 
     <script>
@@ -454,8 +383,6 @@
         if (typeof Telegram !== 'undefined') {
             Telegram.WebApp.ready();
             Telegram.WebApp.expand();
-            Telegram.WebApp.setHeaderColor('#000');
-            Telegram.WebApp.setBackgroundColor('#000');
         }
 
         // Получаем элементы
@@ -467,7 +394,6 @@
         const rageFill = document.getElementById('rageFill');
         const gameOverScreen = document.getElementById('gameOver');
         const finalScoreElement = document.getElementById('finalScore');
-        const finalInsanityElement = document.getElementById('finalInsanity');
         const restartBtn = document.getElementById('restartBtn');
         const startScreen = document.getElementById('startScreen');
         const startBtn = document.getElementById('startBtn');
@@ -483,12 +409,12 @@
         // Настройка canvas
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        mapIndicator.width = 200;
-        mapIndicator.height = 200;
+        mapIndicator.width = 150;
+        mapIndicator.height = 150;
 
-        // ОГРОМНАЯ КАРТА (100x100 клеток!)
-        const MAP_SIZE = 100;
-        const CELL_SIZE = 60;
+        // Размеры лабиринта
+        const MAP_SIZE = 30;
+        const CELL_SIZE = 40;
         const GRID_WIDTH = MAP_SIZE * CELL_SIZE;
         const GRID_HEIGHT = MAP_SIZE * CELL_SIZE;
 
@@ -505,10 +431,6 @@
             powerTimer: 0,
             cameraX: 0,
             cameraY: 0,
-            teleporting: false,
-            gravityReversed: false,
-            controlsReversed: false,
-            lastCrazyEvent: 0,
             dotsCollected: 0,
             totalDots: 0,
             map: []
@@ -516,14 +438,14 @@
 
         // Пакман
         const pacman = {
-            x: MAP_SIZE * CELL_SIZE / 2,
-            y: MAP_SIZE * CELL_SIZE / 2,
-            radius: 25,
-            speed: 5,
+            x: 15 * CELL_SIZE + CELL_SIZE / 2,
+            y: 15 * CELL_SIZE + CELL_SIZE / 2,
+            radius: 15,
+            speed: 4,
             direction: { x: 0, y: 0 },
             mouthAngle: 0.2,
             mouthSpeed: 0.1,
-            color: '#FFFF00',
+            color: '#ffff00',
             trail: [],
             invincible: false,
             invincibleTimer: 0
@@ -533,36 +455,10 @@
         let dots = [];
         let energizers = [];
         let ghosts = [];
-        let zombies = [];
-        let ufos = [];
         let portals = [];
         let powerUps = [];
         let particles = [];
-        let crazyMessages = [];
-
-        // Случайные безумные сообщения
-        const CRAZY_MESSAGES = [
-            "ГДЯ Я?!! 🤪",
-            "ВСЁ НЕ ТАК! 🔄",
-            "ПОЧЕМУ ОНИ ТЕЛЕПОРТИРУЮТСЯ? 🌀",
-            "ЭТО НЕЛОГИЧНО! 🤯",
-            "ГРАВИТАЦИЯ СЛОМАНА! 🌍",
-            "Я ДОЛЖЕН ИДТИ ВВЕРХ? ВНИЗ? 🤔",
-            "ПРИЗРАКИ В МОИХ СТЕНАХ! 👻",
-            "ЗОМБИ-ШАРЫ НЕ ОТСКАКИВАЮТ! 💀",
-            "ЛЕТАЮЩИЕ ТАРЕЛКИ! 🛸",
-            "ПОРТАЛЫ ВЕЗДЕ! 🌀",
-            "УПРАВЛЕНИЕ ИНВЕРТИРОВАНО! ↩️",
-            "ЭКРАН ДРОЖИТ! 📺",
-            "ЦВЕТА МЕНЯЮТСЯ! 🎨",
-            "ЗВУКИ ИЗ НИОТКУДА! 🔊",
-            "МОЙ КУРСОР ЖИВОЙ! 🐭",
-            "ВРЕМЯ ЗАМЕДЛИЛОСЬ! ⏳",
-            "ВСЁ УСКОРИЛОСЬ! ⚡",
-            "КАРТА ВРАЩАЕТСЯ! 🗺️",
-            "Я В МАТРИЦЕ? 💊",
-            "СЛОМАЙ ЭКРАН! 💢"
-        ];
+        let messages = [];
 
         // Инициализация карты
         function initMap() {
@@ -571,49 +467,51 @@
             energizers = [];
             portals = [];
             
-            // Создаем лабиринт с нелогичными проходами
+            // Создаем лабиринт
             for (let y = 0; y < MAP_SIZE; y++) {
                 game.map[y] = [];
                 for (let x = 0; x < MAP_SIZE; x++) {
-                    // Случайные стены (60% проходимых клеток)
-                    const isWall = Math.random() > 0.6;
+                    // Создаем стены по краям и внутри
+                    const isWall = x === 0 || y === 0 || x === MAP_SIZE - 1 || y === MAP_SIZE - 1 || 
+                                  (x % 3 === 0 && y % 3 === 0 && Math.random() > 0.3);
                     game.map[y][x] = isWall ? 1 : 0;
                     
-                    // Точки в проходимых клетках (80% клеток)
-                    if (!isWall && Math.random() > 0.2) {
+                    // Точки в проходимых клетках
+                    if (!isWall && Math.random() > 0.3) {
                         dots.push({
                             x: x * CELL_SIZE + CELL_SIZE / 2,
                             y: y * CELL_SIZE + CELL_SIZE / 2,
-                            radius: 8,
-                            color: '#FFFF00',
-                            collected: false,
-                            blinking: Math.random() > 0.5
+                            radius: 4,
+                            color: '#ffffff',
+                            collected: false
                         });
                     }
                     
-                    // Энерджайзеры (1% клеток)
-                    if (!isWall && Math.random() > 0.99) {
+                    // Энерджайзеры
+                    if (!isWall && Math.random() > 0.98) {
                         energizers.push({
                             x: x * CELL_SIZE + CELL_SIZE / 2,
                             y: y * CELL_SIZE + CELL_SIZE / 2,
-                            radius: 15,
-                            color: '#00FFFF',
-                            collected: false,
-                            pulse: 0
+                            radius: 8,
+                            color: '#00ffff',
+                            collected: false
                         });
                     }
-                    
-                    // Портал (0.5% клеток)
-                    if (!isWall && Math.random() > 0.995) {
-                        portals.push({
-                            x: x * CELL_SIZE + CELL_SIZE / 2,
-                            y: y * CELL_SIZE + CELL_SIZE / 2,
-                            radius: 30,
-                            color: '#FF00FF',
-                            linkedTo: null,
-                            active: true
-                        });
-                    }
+                }
+            }
+            
+            // Добавляем несколько порталов
+            for (let i = 0; i < 4; i++) {
+                const x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                const y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                if (game.map[y][x] === 0) {
+                    portals.push({
+                        x: x * CELL_SIZE + CELL_SIZE / 2,
+                        y: y * CELL_SIZE + CELL_SIZE / 2,
+                        radius: 15,
+                        color: '#ff00ff',
+                        id: i
+                    });
                 }
             }
             
@@ -627,135 +525,86 @@
             
             game.totalDots = dots.length;
             
-            // Создаем врагов
+            // Создаем призраков
             createGhosts();
-            createZombies();
-            createUFOs();
             createPowerUps();
         }
 
         // Создание призраков
         function createGhosts() {
             ghosts = [];
-            const ghostTypes = [
-                { color: '#FF0000', name: 'БЛИНКИ', speed: 3, behavior: 'chase' },
-                { color: '#FF69B4', name: 'ПИНКИ', speed: 2.5, behavior: 'ambush' },
-                { color: '#00FFFF', name: 'ИНКИ', speed: 2, behavior: 'random' },
-                { color: '#FFA500', name: 'КЛАЙД', speed: 3.5, behavior: 'scatter' }
-            ];
+            const ghostColors = ['#ff0000', '#ff69b4', '#00ffff', '#ffa500'];
             
-            for (let i = 0; i < 8 + game.level * 2; i++) {
-                const type = ghostTypes[Math.floor(Math.random() * ghostTypes.length)];
-                ghosts.push({
-                    x: Math.random() * GRID_WIDTH,
-                    y: Math.random() * GRID_HEIGHT,
-                    radius: 20,
-                    color: type.color,
-                    speed: type.speed + Math.random() * 2,
-                    direction: { x: 0, y: 0 },
-                    target: { x: 0, y: 0 },
-                    behavior: type.behavior,
-                    scared: false,
-                    scaredTimer: 0,
-                    teleportCooldown: 0,
-                    name: type.name,
-                    eyes: Math.random() > 0.5
-                });
+            for (let i = 0; i < 4 + game.level; i++) {
+                const x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                const y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                
+                if (game.map[y][x] === 0) {
+                    ghosts.push({
+                        x: x * CELL_SIZE + CELL_SIZE / 2,
+                        y: y * CELL_SIZE + CELL_SIZE / 2,
+                        radius: 14,
+                        color: ghostColors[i % ghostColors.length],
+                        speed: 2 + Math.random(),
+                        direction: { x: 0, y: 0 },
+                        behavior: ['chase', 'scatter', 'random'][Math.floor(Math.random() * 3)],
+                        scared: false,
+                        scaredTimer: 0
+                    });
+                }
             }
         }
 
-        // Создание зомби-шаров
-        function createZombies() {
-            zombies = [];
-            for (let i = 0; i < 5 + game.level; i++) {
-                zombies.push({
-                    x: Math.random() * GRID_WIDTH,
-                    y: Math.random() * GRID_HEIGHT,
-                    radius: 30 + Math.random() * 20,
-                    color: '#00FF00',
-                    speed: 2 + Math.random() * 3,
-                    direction: {
-                        x: Math.random() * 2 - 1,
-                        y: Math.random() * 2 - 1
-                    },
-                    bounceCount: 0,
-                    rotation: 0,
-                    face: Math.random() > 0.5 ? '🧟' : '💀'
-                });
-            }
-        }
-
-        // Создание летающих тарелок
-        function createUFOs() {
-            ufos = [];
-            for (let i = 0; i < 3 + Math.floor(game.level / 2); i++) {
-                ufos.push({
-                    x: Math.random() * GRID_WIDTH,
-                    y: Math.random() * GRID_HEIGHT,
-                    radius: 40,
-                    color: '#FF00FF',
-                    speed: 1 + Math.random() * 2,
-                    direction: { x: 1, y: 0 },
-                    beamActive: false,
-                    beamTimer: 0,
-                    abductionTarget: null,
-                    rotation: 0,
-                    gravityField: 100
-                });
-            }
-        }
-
-        // Создание павер-апов
+        // Создание усилений
         function createPowerUps() {
             powerUps = [];
             const powerTypes = [
-                { type: 'speed', color: '#00FF00', symbol: '⚡', duration: 300 },
-                { type: 'invincible', color: '#FFFF00', symbol: '🛡️', duration: 200 },
-                { type: 'magnet', color: '#FF0000', symbol: '🧲', duration: 400 },
-                { type: 'confuse', color: '#FF00FF', symbol: '🌀', duration: 250 },
-                { type: 'time', color: '#00FFFF', symbol: '⏳', duration: 350 }
+                { type: 'speed', color: '#00ff00', duration: 300 },
+                { type: 'invincible', color: '#ffff00', duration: 200 },
+                { type: 'magnet', color: '#ff0000', duration: 400 }
             ];
             
-            for (let i = 0; i < 5; i++) {
-                const power = powerTypes[Math.floor(Math.random() * powerTypes.length)];
-                powerUps.push({
-                    x: Math.random() * GRID_WIDTH,
-                    y: Math.random() * GRID_HEIGHT,
-                    radius: 20,
-                    color: power.color,
-                    type: power.type,
-                    symbol: power.symbol,
-                    duration: power.duration,
-                    collected: false,
-                    rotation: 0
-                });
+            for (let i = 0; i < 3; i++) {
+                const x = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                const y = Math.floor(Math.random() * (MAP_SIZE - 4)) + 2;
+                
+                if (game.map[y][x] === 0) {
+                    const power = powerTypes[Math.floor(Math.random() * powerTypes.length)];
+                    powerUps.push({
+                        x: x * CELL_SIZE + CELL_SIZE / 2,
+                        y: y * CELL_SIZE + CELL_SIZE / 2,
+                        radius: 10,
+                        color: power.color,
+                        type: power.type,
+                        duration: power.duration,
+                        collected: false
+                    });
+                }
             }
         }
 
-        // Класс для частиц
+        // Частицы
         class Particle {
             constructor(x, y, color) {
                 this.x = x;
                 this.y = y;
-                this.size = Math.random() * 10 + 2;
-                this.speedX = Math.random() * 6 - 3;
-                this.speedY = Math.random() * 6 - 3;
+                this.size = Math.random() * 4 + 1;
+                this.speedX = Math.random() * 4 - 2;
+                this.speedY = Math.random() * 4 - 2;
                 this.color = color;
-                this.life = 50;
-                this.gravity = game.gravityReversed ? -0.1 : 0.1;
+                this.life = 30;
             }
 
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-                this.speedY += this.gravity;
                 this.life--;
                 return this.life > 0;
             }
 
             draw() {
                 ctx.save();
-                ctx.globalAlpha = this.life / 50;
+                ctx.globalAlpha = this.life / 30;
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
@@ -766,31 +615,22 @@
 
         // Функции игры
         function updatePacman() {
-            // Применяем инвертированное управление
-            let dirX = pacman.direction.x;
-            let dirY = pacman.direction.y;
+            // Движение
+            let newX = pacman.x + pacman.direction.x * pacman.speed;
+            let newY = pacman.y + pacman.direction.y * pacman.speed;
             
-            if (game.controlsReversed) {
-                dirX = -dirX;
-                dirY = -dirY;
-            }
-            
-            // Движение с проверкой стен
-            let newX = pacman.x + dirX * pacman.speed;
-            let newY = pacman.y + dirY * pacman.speed;
-            
-            // Телепортация через края карты
+            // Телепортация через края
             if (newX < 0) newX = GRID_WIDTH;
             if (newX > GRID_WIDTH) newX = 0;
             if (newY < 0) newY = GRID_HEIGHT;
             if (newY > GRID_HEIGHT) newY = 0;
             
-            // Проверка столкновения со стенами (иногда проходит сквозь)
+            // Проверка стен
             const gridX = Math.floor(newX / CELL_SIZE);
             const gridY = Math.floor(newY / CELL_SIZE);
             
             if (gridX >= 0 && gridX < MAP_SIZE && gridY >= 0 && gridY < MAP_SIZE) {
-                if (game.map[gridY][gridX] === 0 || Math.random() > 0.7) { // 30% шанс пройти сквозь стену
+                if (game.map[gridY][gridX] === 0) {
                     pacman.x = newX;
                     pacman.y = newY;
                 }
@@ -804,7 +644,7 @@
             
             // След
             pacman.trail.push({ x: pacman.x, y: pacman.y });
-            if (pacman.trail.length > 20) {
+            if (pacman.trail.length > 10) {
                 pacman.trail.shift();
             }
             
@@ -828,14 +668,7 @@
                         game.score += 10;
                         game.dotsCollected++;
                         
-                        // Иногда точка "кусается"
-                        if (Math.random() > 0.9) {
-                            takeDamage(1);
-                            showCrazyMessage("ТОЧКА УКУСИЛА! 😱", pacman.x, pacman.y);
-                        }
-                        
-                        // Создаем частицы
-                        for (let i = 0; i < 5; i++) {
+                        for (let i = 0; i < 3; i++) {
                             particles.push(new Particle(dot.x, dot.y, dot.color));
                         }
                     }
@@ -853,58 +686,36 @@
                         energizer.collected = true;
                         game.score += 50;
                         game.powerMode = true;
-                        game.powerTimer = 300;
+                        game.powerTimer = 200;
                         
-                        // Энерджайзер делает что-то безумное
-                        const effects = [
-                            () => { game.gravityReversed = !game.gravityReversed; showCrazyMessage("ГРАВИТАЦИЯ ПЕРЕВЕРНУЛАСЬ! 🌍", pacman.x, pacman.y); },
-                            () => { game.controlsReversed = !game.controlsReversed; showCrazyMessage("УПРАВЛЕНИЕ ИНВЕРТИРОВАНО! ↩️", pacman.x, pacman.y); },
-                            () => { pacman.speed *= 2; setTimeout(() => pacman.speed /= 2, 5000); showCrazyMessage("СУПЕР СКОРОСТЬ! ⚡", pacman.x, pacman.y); },
-                            () => { teleportRandom(); showCrazyMessage("ТЕЛЕПОРТАЦИЯ! 🌀", pacman.x, pacman.y); }
-                        ];
+                        ghosts.forEach(ghost => {
+                            ghost.scared = true;
+                            ghost.scaredTimer = 200;
+                        });
                         
-                        effects[Math.floor(Math.random() * effects.length)]();
-                        
-                        // Частицы
-                        for (let i = 0; i < 20; i++) {
+                        for (let i = 0; i < 10; i++) {
                             particles.push(new Particle(energizer.x, energizer.y, energizer.color));
                         }
+                        
+                        showMessage("СИЛА!", energizer.x, energizer.y);
                     }
                 }
             });
             
             // Портал
             portals.forEach(portal => {
-                if (portal.active) {
-                    const dx = pacman.x - portal.x;
-                    const dy = pacman.y - portal.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < pacman.radius + portal.radius && portal.linkedTo && !game.teleporting) {
-                        game.teleporting = true;
-                        const oldX = pacman.x;
-                        const oldY = pacman.y;
-                        
-                        // Эффект телепортации
-                        createTeleportEffect(oldX, oldY);
-                        
-                        // Телепортация
-                        pacman.x = portal.linkedTo.x;
-                        pacman.y = portal.linkedTo.y;
-                        
-                        // Случайное направление после телепортации
-                        pacman.direction.x = Math.random() * 2 - 1;
-                        pacman.direction.y = Math.random() * 2 - 1;
-                        
-                        createTeleportEffect(pacman.x, pacman.y);
-                        showCrazyMessage("КУДА Я ПОПАЛ?! 🌀", pacman.x, pacman.y);
-                        
-                        setTimeout(() => game.teleporting = false, 500);
-                    }
+                const dx = pacman.x - portal.x;
+                const dy = pacman.y - portal.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < pacman.radius + portal.radius && portal.linkedTo) {
+                    pacman.x = portal.linkedTo.x;
+                    pacman.y = portal.linkedTo.y;
+                    showMessage("ТЕЛЕПОРТ", portal.x, portal.y);
                 }
             });
             
-            // Павер-апы
+            // Усиления
             powerUps.forEach(powerUp => {
                 if (!powerUp.collected) {
                     const dx = pacman.x - powerUp.x;
@@ -926,77 +737,82 @@
                 }
             }
             
-            // Обновление камеры
+            // Камера
             game.cameraX = pacman.x - canvas.width / 2;
             game.cameraY = pacman.y - canvas.height / 2;
             
-            // Ограничение камеры
             game.cameraX = Math.max(0, Math.min(game.cameraX, GRID_WIDTH - canvas.width));
             game.cameraY = Math.max(0, Math.min(game.cameraY, GRID_HEIGHT - canvas.height));
             
-            // Увеличение безумия
-            game.insanity = Math.min(100, game.insanity + 0.01);
-            
-            // Случайные безумные события
-            if (Date.now() - game.lastCrazyEvent > 10000 && Math.random() > 0.99) {
-                triggerCrazyEvent();
-                game.lastCrazyEvent = Date.now();
-            }
+            // Безумие
+            game.insanity = Math.min(100, game.insanity + 0.005);
         }
 
         function updateGhosts() {
             ghosts.forEach(ghost => {
-                // Телепортация призраков
-                if (ghost.teleportCooldown <= 0 && Math.random() > 0.995) {
-                    ghost.x = Math.random() * GRID_WIDTH;
-                    ghost.y = Math.random() * GRID_HEIGHT;
-                    ghost.teleportCooldown = 60;
-                    showCrazyMessage("ПРИЗРАК ТЕЛЕПОРТИРОВАЛСЯ! 👻", ghost.x, ghost.y);
-                }
-                ghost.teleportCooldown--;
-                
                 // Поведение
+                let targetX, targetY;
+                
                 switch(ghost.behavior) {
                     case 'chase':
-                        ghost.target.x = pacman.x;
-                        ghost.target.y = pacman.y;
+                        targetX = pacman.x;
+                        targetY = pacman.y;
                         break;
-                    case 'ambush':
-                        ghost.target.x = pacman.x + pacman.direction.x * 100;
-                        ghost.target.y = pacman.y + pacman.direction.y * 100;
+                    case 'scatter':
+                        targetX = 0;
+                        targetY = 0;
                         break;
                     case 'random':
                         if (Math.random() > 0.98) {
-                            ghost.target.x = Math.random() * GRID_WIDTH;
-                            ghost.target.y = Math.random() * GRID_HEIGHT;
+                            targetX = Math.random() * GRID_WIDTH;
+                            targetY = Math.random() * GRID_HEIGHT;
+                        } else {
+                            targetX = ghost.targetX || ghost.x;
+                            targetY = ghost.targetY || ghost.y;
                         }
-                        break;
-                    case 'scatter':
-                        ghost.target.x = Math.random() > 0.5 ? 0 : GRID_WIDTH;
-                        ghost.target.y = Math.random() > 0.5 ? 0 : GRID_HEIGHT;
                         break;
                 }
                 
-                // Движение к цели (иногда в противоположную сторону)
-                let dx = ghost.target.x - ghost.x;
-                let dy = ghost.target.y - ghost.y;
+                ghost.targetX = targetX;
+                ghost.targetY = targetY;
+                
+                // Движение
+                let dx = targetX - ghost.x;
+                let dy = targetY - ghost.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance > 0) {
-                    if (Math.random() > 0.1) { // 10% шанс идти в противоположную сторону
-                        ghost.direction.x = (dx / distance) * ghost.speed;
-                        ghost.direction.y = (dy / distance) * ghost.speed;
+                    ghost.direction.x = (dx / distance) * ghost.speed;
+                    ghost.direction.y = (dy / distance) * ghost.speed;
+                }
+                
+                // Обновление позиции с проверкой стен
+                let newX = ghost.x + ghost.direction.x;
+                let newY = ghost.y + ghost.direction.y;
+                
+                const gridX = Math.floor(newX / CELL_SIZE);
+                const gridY = Math.floor(newY / CELL_SIZE);
+                
+                if (gridX >= 0 && gridX < MAP_SIZE && gridY >= 0 && gridY < MAP_SIZE) {
+                    if (game.map[gridY][gridX] === 0) {
+                        ghost.x = newX;
+                        ghost.y = newY;
                     } else {
-                        ghost.direction.x = (-dx / distance) * ghost.speed;
-                        ghost.direction.y = (-dy / distance) * ghost.speed;
+                        // Изменение направления при столкновении со стеной
+                        ghost.direction.x = Math.random() * 2 - 1;
+                        ghost.direction.y = Math.random() * 2 - 1;
                     }
                 }
                 
-                // Обновление позиции
-                ghost.x += ghost.direction.x;
-                ghost.y += ghost.direction.y;
+                // Страх
+                if (ghost.scared) {
+                    ghost.scaredTimer--;
+                    if (ghost.scaredTimer <= 0) {
+                        ghost.scared = false;
+                    }
+                }
                 
-                // Проверка столкновения с Пакманом
+                // Столкновение с Пакманом
                 const distToPacman = Math.sqrt(
                     Math.pow(ghost.x - pacman.x, 2) + 
                     Math.pow(ghost.y - pacman.y, 2)
@@ -1004,137 +820,14 @@
                 
                 if (distToPacman < pacman.radius + ghost.radius) {
                     if (game.powerMode || pacman.invincible) {
-                        // Пакман съедает призрака
                         game.score += 200;
                         ghost.x = Math.random() * GRID_WIDTH;
                         ghost.y = Math.random() * GRID_HEIGHT;
-                        showCrazyMessage("НОМ-НОМ ПРИЗРАК! 👻", ghost.x, ghost.y);
+                        showMessage("+200", ghost.x, ghost.y);
                     } else {
-                        // Призрак съедает Пакмана
-                        takeDamage(1);
+                        takeDamage();
                         ghost.x = Math.random() * GRID_WIDTH;
                         ghost.y = Math.random() * GRID_HEIGHT;
-                    }
-                }
-                
-                // Страшный режим
-                if (ghost.scared) {
-                    ghost.scaredTimer--;
-                    if (ghost.scaredTimer <= 0) {
-                        ghost.scared = false;
-                    }
-                }
-            });
-        }
-
-        function updateZombies() {
-            zombies.forEach(zombie => {
-                // Обновление позиции
-                zombie.x += zombie.direction.x * zombie.speed;
-                zombie.y += zombie.direction.y * zombie.speed;
-                
-                // Нелогичный отскок от стен
-                const gridX = Math.floor(zombie.x / CELL_SIZE);
-                const gridY = Math.floor(zombie.y / CELL_SIZE);
-                
-                if (gridX >= 0 && gridX < MAP_SIZE && gridY >= 0 && gridY < MAP_SIZE) {
-                    if (game.map[gridY][gridX] === 1 || Math.random() > 0.95) {
-                        // Иногда отскакивает, иногда проходит сквозь
-                        if (Math.random() > 0.3) {
-                            zombie.direction.x = -zombie.direction.x;
-                            zombie.direction.y = -zombie.direction.y;
-                            zombie.bounceCount++;
-                            
-                            // После 3 отскоков меняет направление случайно
-                            if (zombie.bounceCount > 3) {
-                                zombie.direction.x = Math.random() * 2 - 1;
-                                zombie.direction.y = Math.random() * 2 - 1;
-                                zombie.bounceCount = 0;
-                            }
-                        }
-                    }
-                }
-                
-                // Телепортация через края
-                if (zombie.x < -zombie.radius) zombie.x = GRID_WIDTH + zombie.radius;
-                if (zombie.x > GRID_WIDTH + zombie.radius) zombie.x = -zombie.radius;
-                if (zombie.y < -zombie.radius) zombie.y = GRID_HEIGHT + zombie.radius;
-                if (zombie.y > GRID_HEIGHT + zombie.radius) zombie.y = -zombie.radius;
-                
-                // Вращение
-                zombie.rotation += 0.05;
-                
-                // Проверка столкновения с Пакманом
-                const distToPacman = Math.sqrt(
-                    Math.pow(zombie.x - pacman.x, 2) + 
-                    Math.pow(zombie.y - pacman.y, 2)
-                );
-                
-                if (distToPacman < pacman.radius + zombie.radius) {
-                    takeDamage(2);
-                    // Отталкивание
-                    const angle = Math.atan2(pacman.y - zombie.y, pacman.x - zombie.x);
-                    pacman.x += Math.cos(angle) * 50;
-                    pacman.y += Math.sin(angle) * 50;
-                    showCrazyMessage("ЗОМБИ-ШАР АТАКУЕТ! 💀", zombie.x, zombie.y);
-                }
-            });
-        }
-
-        function updateUFOs() {
-            ufos.forEach(ufo => {
-                // Движение по синусоиде
-                ufo.x += ufo.direction.x * ufo.speed;
-                ufo.y += Math.sin(Date.now() / 1000 + ufo.x / 100) * 3;
-                
-                // Поворот
-                ufo.rotation += 0.02;
-                
-                // Луч
-                if (ufo.beamActive) {
-                    ufo.beamTimer--;
-                    if (ufo.beamTimer <= 0) {
-                        ufo.beamActive = false;
-                    }
-                } else if (Math.random() > 0.995) {
-                    ufo.beamActive = true;
-                    ufo.beamTimer = 60;
-                    ufo.abductionTarget = { x: pacman.x, y: pacman.y };
-                }
-                
-                // Гравитационное поле
-                const distToPacman = Math.sqrt(
-                    Math.pow(ufo.x - pacman.x, 2) + 
-                    Math.pow(ufo.y - pacman.y, 2)
-                );
-                
-                if (distToPacman < ufo.gravityField) {
-                    // Притягивает или отталкивает Пакмана
-                    const force = (ufo.gravityField - distToPacman) / ufo.gravityField * 2;
-                    const angle = Math.atan2(ufo.y - pacman.y, ufo.x - pacman.x);
-                    
-                    if (game.gravityReversed) {
-                        pacman.x += Math.cos(angle) * force;
-                        pacman.y += Math.sin(angle) * force;
-                    } else {
-                        pacman.x -= Math.cos(angle) * force;
-                        pacman.y -= Math.sin(angle) * force;
-                    }
-                }
-                
-                // Проверка луча
-                if (ufo.beamActive && ufo.abductionTarget) {
-                    const beamDist = Math.sqrt(
-                        Math.pow(ufo.x - pacman.x, 2) + 
-                        Math.pow(ufo.y - pacman.y, 2)
-                    );
-                    
-                    if (beamDist < 100) {
-                        // Телепортация Пакмана
-                        pacman.x = Math.random() * GRID_WIDTH;
-                        pacman.y = Math.random() * GRID_HEIGHT;
-                        showCrazyMessage("ПОХИЩЕН НЛО! 🛸", ufo.x, ufo.y);
-                        ufo.beamActive = false;
                     }
                 }
             });
@@ -1144,38 +837,34 @@
             particles = particles.filter(particle => particle.update());
         }
 
-        function updateCrazyMessages() {
-            crazyMessages = crazyMessages.filter(msg => {
+        function updateMessages() {
+            messages = messages.filter(msg => {
                 msg.y -= 2;
                 msg.life--;
                 return msg.life > 0;
             });
         }
 
-        function takeDamage(amount) {
+        function takeDamage() {
             if (pacman.invincible) return;
             
-            game.lives -= amount;
-            game.rage = Math.min(100, game.rage + 10);
+            game.lives--;
+            game.rage = Math.min(100, game.rage + 15);
             rageFill.style.width = `${game.rage}%`;
             
-            // Эффект повреждения
-            for (let i = 0; i < 20; i++) {
-                particles.push(new Particle(pacman.x, pacman.y, '#FF0000'));
+            for (let i = 0; i < 10; i++) {
+                particles.push(new Particle(pacman.x, pacman.y, '#ff0000'));
             }
             
-            // Мигание
             pacman.invincible = true;
             pacman.invincibleTimer = 60;
             
-            // Визуальный эффект
-            showCrazyMessage("АЙ! БОЛЬНО! 😫", pacman.x, pacman.y);
+            showMessage("ПОРАЖЕНИЕ", pacman.x, pacman.y);
             
             if (game.lives <= 0) {
                 endGame();
             }
             
-            // Обновление отображения жизней
             updateLivesDisplay();
         }
 
@@ -1186,157 +875,73 @@
                 case 'speed':
                     pacman.speed *= 1.5;
                     setTimeout(() => pacman.speed /= 1.5, powerUp.duration);
-                    showCrazyMessage("СУПЕР СКОРОСТЬ! ⚡", powerUp.x, powerUp.y);
+                    showMessage("СКОРОСТЬ", powerUp.x, powerUp.y);
                     break;
                     
                 case 'invincible':
                     pacman.invincible = true;
                     pacman.invincibleTimer = powerUp.duration;
-                    showCrazyMessage("НЕУЯЗВИМОСТЬ! 🛡️", powerUp.x, powerUp.y);
+                    showMessage("ЗАЩИТА", powerUp.x, powerUp.y);
                     break;
                     
                 case 'magnet':
-                    // Притягивает все точки
-                    showCrazyMessage("МАГНИТ ДЛЯ ТОЧЕК! 🧲", powerUp.x, powerUp.y);
-                    break;
-                    
-                case 'confuse':
-                    // Путает врагов
-                    ghosts.forEach(ghost => {
-                        ghost.direction.x = -ghost.direction.x;
-                        ghost.direction.y = -ghost.direction.y;
-                    });
-                    showCrazyMessage("ВРАГИ ЗАПУТАЛИСЬ! 🌀", powerUp.x, powerUp.y);
-                    break;
-                    
-                case 'time':
-                    // Замедляет время для врагов
-                    showCrazyMessage("ВРЕМЯ ЗАМЕДЛИЛОСЬ! ⏳", powerUp.x, powerUp.y);
+                    // Притягивает ближайшие точки
+                    showMessage("МАГНИТ", powerUp.x, powerUp.y);
                     break;
             }
             
-            // Частицы
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 8; i++) {
                 particles.push(new Particle(powerUp.x, powerUp.y, powerUp.color));
             }
         }
 
-        function triggerCrazyEvent() {
-            const events = [
-                () => {
-                    // Инвертирование экрана
-                    canvas.style.filter = 'invert(1)';
-                    setTimeout(() => canvas.style.filter = '', 3000);
-                    showCrazyMessage("ЭКРАН ПЕРЕВЕРНУЛСЯ! 📺", canvas.width/2, canvas.height/2);
-                },
-                () => {
-                    // Случайная телепортация всех
-                    teleportRandom();
-                    showCrazyMessage("ВСЕ ТЕЛЕПОРТИРОВАЛИСЬ! 🌀", canvas.width/2, canvas.height/2);
-                },
-                () => {
-                    // Все враги становятся гигантскими
-                    ghosts.forEach(g => g.radius *= 2);
-                    zombies.forEach(z => z.radius *= 2);
-                    setTimeout(() => {
-                        ghosts.forEach(g => g.radius /= 2);
-                        zombies.forEach(z => z.radius /= 2);
-                    }, 5000);
-                    showCrazyMessage("ГИГАНТСКИЕ ВРАГИ! 👹", canvas.width/2, canvas.height/2);
-                },
-                () => {
-                    // Все стены исчезают
-                    showCrazyMessage("СТЕНЫ ИСЧЕЗЛИ! 🧱", canvas.width/2, canvas.height/2);
-                },
-                () => {
-                    // Пакман меняет цвет
-                    const oldColor = pacman.color;
-                    pacman.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                    setTimeout(() => pacman.color = oldColor, 5000);
-                    showCrazyMessage("Я РАЗНОЦВЕТНЫЙ! 🌈", pacman.x, pacman.y);
-                }
-            ];
-            
-            events[Math.floor(Math.random() * events.length)]();
-            game.insanity = Math.min(100, game.insanity + 10);
-        }
-
-        function teleportRandom() {
-            pacman.x = Math.random() * GRID_WIDTH;
-            pacman.y = Math.random() * GRID_HEIGHT;
-            createTeleportEffect(pacman.x, pacman.y);
-        }
-
-        function createTeleportEffect(x, y) {
-            const effect = document.createElement('div');
-            effect.className = 'teleport-effect';
-            effect.style.left = `${x - 50}px`;
-            effect.style.top = `${y - 50}px`;
-            document.getElementById('gameContainer').appendChild(effect);
-            
-            setTimeout(() => effect.remove(), 1000);
-        }
-
-        function showCrazyMessage(text, x, y) {
-            crazyMessages.push({
+        function showMessage(text, x, y) {
+            messages.push({
                 text: text,
                 x: x,
                 y: y,
-                life: 100
+                life: 60
             });
         }
 
         function updateLivesDisplay() {
-            let hearts = '';
-            for (let i = 0; i < game.lives; i++) {
-                hearts += '❤️';
-            }
-            livesElement.textContent = `ЖИЗНИ: ${hearts}`;
+            livesElement.textContent = `Жизни: ${game.lives}`;
         }
 
         function updateUI() {
-            scoreElement.textContent = `СЧЁТ: ${game.score}`;
-            levelElement.textContent = `УРОВЕНЬ БЕЗУМИЯ: ${game.level}`;
-            insanityLevel.textContent = `БЕЗУМИЕ: ${Math.floor(game.insanity)}%`;
+            scoreElement.textContent = `Счет: ${game.score}`;
+            levelElement.textContent = `Уровень: ${game.level}`;
+            insanityLevel.textContent = `Сложность: ${Math.floor(game.insanity)}%`;
             
-            // Автоматическое повышение уровня при сборе всех точек
-            if (game.dotsCollected >= game.totalDots) {
+            if (game.dotsCollected >= game.totalDots * 0.8) {
                 game.level++;
                 game.dotsCollected = 0;
                 initMap();
-                showCrazyMessage(`УРОВЕНЬ ${game.level}! 🎉`, pacman.x, pacman.y);
+                showMessage(`УРОВЕНЬ ${game.level}`, pacman.x, pacman.y);
             }
             
-            // Шкала ярости
             if (game.rage >= 100) {
                 endGame();
             }
         }
 
         function drawMap() {
-            // Рисуем карту
+            // Стены
             for (let y = 0; y < MAP_SIZE; y++) {
                 for (let x = 0; x < MAP_SIZE; x++) {
                     const screenX = x * CELL_SIZE - game.cameraX;
                     const screenY = y * CELL_SIZE - game.cameraY;
                     
-                    // Только видимые клетки
                     if (screenX + CELL_SIZE > 0 && screenX < canvas.width &&
                         screenY + CELL_SIZE > 0 && screenY < canvas.height) {
                         
                         if (game.map[y][x] === 1) {
-                            // Стены
-                            ctx.fillStyle = '#1E90FF';
+                            ctx.fillStyle = '#1a75ff';
                             ctx.fillRect(screenX, screenY, CELL_SIZE, CELL_SIZE);
                             
-                            // Текстура стен
-                            ctx.strokeStyle = '#00BFFF';
-                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = '#0052cc';
+                            ctx.lineWidth = 1;
                             ctx.strokeRect(screenX, screenY, CELL_SIZE, CELL_SIZE);
-                        } else {
-                            // Пол
-                            ctx.fillStyle = '#000';
-                            ctx.fillRect(screenX, screenY, CELL_SIZE, CELL_SIZE);
                         }
                     }
                 }
@@ -1348,15 +953,10 @@
                     const screenX = dot.x - game.cameraX;
                     const screenY = dot.y - game.cameraY;
                     
-                    if (dot.blinking) {
-                        ctx.globalAlpha = 0.5 + Math.sin(Date.now() / 200) * 0.5;
-                    }
-                    
                     ctx.fillStyle = dot.color;
                     ctx.beginPath();
                     ctx.arc(screenX, screenY, dot.radius, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.globalAlpha = 1;
                 }
             });
             
@@ -1366,54 +966,33 @@
                     const screenX = energizer.x - game.cameraX;
                     const screenY = energizer.y - game.cameraY;
                     
-                    energizer.pulse += 0.1;
-                    const pulseSize = energizer.radius + Math.sin(energizer.pulse) * 5;
-                    
                     ctx.fillStyle = energizer.color;
                     ctx.beginPath();
-                    ctx.arc(screenX, screenY, pulseSize, 0, Math.PI * 2);
+                    ctx.arc(screenX, screenY, energizer.radius, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Свечение
-                    ctx.shadowColor = energizer.color;
-                    ctx.shadowBlur = 20;
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, pulseSize, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
+                    // Мерцание
+                    if (Math.sin(Date.now() / 200) > 0) {
+                        ctx.shadowColor = energizer.color;
+                        ctx.shadowBlur = 10;
+                        ctx.beginPath();
+                        ctx.arc(screenX, screenY, energizer.radius, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
                 }
             });
             
             // Порталы
             portals.forEach(portal => {
-                if (portal.active) {
-                    const screenX = portal.x - game.cameraX;
-                    const screenY = portal.y - game.cameraY;
-                    
-                    ctx.strokeStyle = portal.color;
-                    ctx.lineWidth = 5;
-                    ctx.beginPath();
-                    ctx.arc(screenX, screenY, portal.radius, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    // Вращение
-                    ctx.save();
-                    ctx.translate(screenX, screenY);
-                    ctx.rotate(Date.now() / 1000);
-                    ctx.strokeStyle = '#00FFFF';
-                    ctx.beginPath();
-                    for (let i = 0; i < 8; i++) {
-                        const angle = (i / 8) * Math.PI * 2;
-                        const x1 = Math.cos(angle) * portal.radius;
-                        const y1 = Math.sin(angle) * portal.radius;
-                        const x2 = Math.cos(angle) * (portal.radius - 10);
-                        const y2 = Math.sin(angle) * (portal.radius - 10);
-                        ctx.moveTo(x1, y1);
-                        ctx.lineTo(x2, y2);
-                    }
-                    ctx.stroke();
-                    ctx.restore();
-                }
+                const screenX = portal.x - game.cameraX;
+                const screenY = portal.y - game.cameraY;
+                
+                ctx.strokeStyle = portal.color;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(screenX, screenY, portal.radius, 0, Math.PI * 2);
+                ctx.stroke();
             });
         }
 
@@ -1422,27 +1001,27 @@
             const screenY = pacman.y - game.cameraY;
             
             // След
-            ctx.strokeStyle = 'rgba(255, 255, 0, 0.3)';
-            ctx.lineWidth = 5;
-            ctx.beginPath();
-            pacman.trail.forEach((point, i) => {
-                const trailX = point.x - game.cameraX;
-                const trailY = point.y - game.cameraY;
-                if (i === 0) ctx.moveTo(trailX, trailY);
-                else ctx.lineTo(trailX, trailY);
-            });
-            ctx.stroke();
+            if (pacman.trail.length > 1) {
+                ctx.strokeStyle = 'rgba(255, 255, 0, 0.2)';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                pacman.trail.forEach((point, i) => {
+                    const trailX = point.x - game.cameraX;
+                    const trailY = point.y - game.cameraY;
+                    if (i === 0) ctx.moveTo(trailX, trailY);
+                    else ctx.lineTo(trailX, trailY);
+                });
+                ctx.stroke();
+            }
             
-            // Тело Пакмана
+            // Тело
             ctx.save();
             ctx.translate(screenX, screenY);
             
-            // Мигание при неуязвимости
             if (pacman.invincible && Math.floor(Date.now() / 100) % 2 === 0) {
                 ctx.globalAlpha = 0.5;
             }
             
-            // Рот
             ctx.fillStyle = pacman.color;
             ctx.beginPath();
             ctx.moveTo(0, 0);
@@ -1453,7 +1032,7 @@
             // Глаз
             ctx.fillStyle = '#000';
             ctx.beginPath();
-            ctx.arc(pacman.radius * 0.3, -pacman.radius * 0.3, pacman.radius * 0.2, 0, Math.PI * 2);
+            ctx.arc(pacman.radius * 0.4, -pacman.radius * 0.4, pacman.radius * 0.2, 0, Math.PI * 2);
             ctx.fill();
             
             ctx.restore();
@@ -1468,131 +1047,39 @@
                 ctx.translate(screenX, screenY);
                 
                 // Тело
-                ctx.fillStyle = ghost.scared ? '#0000FF' : ghost.color;
+                ctx.fillStyle = ghost.scared ? '#0000ff' : ghost.color;
                 ctx.beginPath();
                 ctx.arc(0, 0, ghost.radius, 0, Math.PI * 2);
                 ctx.fill();
                 
                 // Глаза
-                ctx.fillStyle = '#FFFFFF';
+                ctx.fillStyle = '#fff';
                 ctx.beginPath();
-                ctx.arc(-ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.3, 0, Math.PI * 2);
-                ctx.arc(ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.3, 0, Math.PI * 2);
+                ctx.arc(-ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.25, 0, Math.PI * 2);
+                ctx.arc(ghost.radius * 0.3, -ghost.radius * 0.3, ghost.radius * 0.25, 0, Math.PI * 2);
                 ctx.fill();
                 
                 // Зрачки
-                ctx.fillStyle = '#0000FF';
+                ctx.fillStyle = '#0000ff';
                 const lookX = pacman.x - ghost.x;
                 const lookY = pacman.y - ghost.y;
                 const angle = Math.atan2(lookY, lookX);
                 ctx.beginPath();
                 ctx.arc(
-                    -ghost.radius * 0.3 + Math.cos(angle) * 5,
-                    -ghost.radius * 0.3 + Math.sin(angle) * 5,
-                    ghost.radius * 0.15,
+                    -ghost.radius * 0.3 + Math.cos(angle) * 4,
+                    -ghost.radius * 0.3 + Math.sin(angle) * 4,
+                    ghost.radius * 0.12,
                     0,
                     Math.PI * 2
                 );
                 ctx.arc(
-                    ghost.radius * 0.3 + Math.cos(angle) * 5,
-                    -ghost.radius * 0.3 + Math.sin(angle) * 5,
-                    ghost.radius * 0.15,
+                    ghost.radius * 0.3 + Math.cos(angle) * 4,
+                    -ghost.radius * 0.3 + Math.sin(angle) * 4,
+                    ghost.radius * 0.12,
                     0,
                     Math.PI * 2
                 );
                 ctx.fill();
-                
-                // Имя призрака
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(ghost.name, 0, ghost.radius + 15);
-                
-                ctx.restore();
-            });
-        }
-
-        function drawZombies() {
-            zombies.forEach(zombie => {
-                const screenX = zombie.x - game.cameraX;
-                const screenY = zombie.y - game.cameraY;
-                
-                ctx.save();
-                ctx.translate(screenX, screenY);
-                ctx.rotate(zombie.rotation);
-                
-                // Тело зомби-шара
-                ctx.fillStyle = zombie.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, zombie.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Лицо зомби
-                ctx.fillStyle = '#000';
-                ctx.font = `${zombie.radius}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(zombie.face, 0, 0);
-                
-                // Кровавые следы
-                ctx.strokeStyle = '#8B0000';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                for (let i = 0; i < 8; i++) {
-                    const angle = (i / 8) * Math.PI * 2;
-                    const x = Math.cos(angle) * zombie.radius;
-                    const y = Math.sin(angle) * zombie.radius;
-                    ctx.moveTo(x, y);
-                    ctx.lineTo(x * 1.5, y * 1.5);
-                }
-                ctx.stroke();
-                
-                ctx.restore();
-            });
-        }
-
-        function drawUFOs() {
-            ufos.forEach(ufo => {
-                const screenX = ufo.x - game.cameraX;
-                const screenY = ufo.y - game.cameraY;
-                
-                ctx.save();
-                ctx.translate(screenX, screenY);
-                ctx.rotate(ufo.rotation);
-                
-                // Корпус НЛО
-                ctx.fillStyle = ufo.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, ufo.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Купол
-                ctx.fillStyle = '#00FFFF';
-                ctx.beginPath();
-                ctx.arc(0, 0, ufo.radius * 0.7, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Огни
-                ctx.fillStyle = '#FFFF00';
-                for (let i = 0; i < 6; i++) {
-                    const angle = (i / 6) * Math.PI * 2;
-                    const x = Math.cos(angle) * ufo.radius * 0.8;
-                    const y = Math.sin(angle) * ufo.radius * 0.8;
-                    ctx.beginPath();
-                    ctx.arc(x, y, ufo.radius * 0.2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                
-                // Луч
-                if (ufo.beamActive) {
-                    ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
-                    ctx.beginPath();
-                    ctx.moveTo(0, ufo.radius);
-                    ctx.lineTo(-50, canvas.height);
-                    ctx.lineTo(50, canvas.height);
-                    ctx.closePath();
-                    ctx.fill();
-                }
                 
                 ctx.restore();
             });
@@ -1604,26 +1091,26 @@
                     const screenX = powerUp.x - game.cameraX;
                     const screenY = powerUp.y - game.cameraY;
                     
-                    ctx.save();
-                    ctx.translate(screenX, screenY);
-                    
-                    // Вращение
-                    powerUp.rotation += 0.05;
-                    ctx.rotate(powerUp.rotation);
-                    
-                    // Основа
                     ctx.fillStyle = powerUp.color;
                     ctx.beginPath();
-                    ctx.arc(0, 0, powerUp.radius, 0, Math.PI * 2);
+                    ctx.arc(screenX, screenY, powerUp.radius, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Символ
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.font = '24px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(powerUp.symbol, 0, 0);
-                    
+                    // Вращение
+                    ctx.save();
+                    ctx.translate(screenX, screenY);
+                    ctx.rotate(Date.now() / 1000);
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    for (let i = 0; i < 4; i++) {
+                        const angle = (i / 4) * Math.PI * 2;
+                        const x = Math.cos(angle) * powerUp.radius;
+                        const y = Math.sin(angle) * powerUp.radius;
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
                     ctx.restore();
                 }
             });
@@ -1633,13 +1120,13 @@
             particles.forEach(particle => particle.draw());
         }
 
-        function drawCrazyMessages() {
-            crazyMessages.forEach(msg => {
+        function drawMessages() {
+            messages.forEach(msg => {
                 const screenX = msg.x - game.cameraX;
                 const screenY = msg.y - game.cameraY;
                 
-                ctx.fillStyle = '#FFFF00';
-                ctx.font = '24px Comic Sans MS';
+                ctx.fillStyle = '#ffff00';
+                ctx.font = '16px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText(msg.text, screenX, screenY);
@@ -1647,35 +1134,50 @@
         }
 
         function drawMapIndicator() {
-            mapCtx.clearRect(0, 0, 200, 200);
+            mapCtx.clearRect(0, 0, 150, 150);
             
-            // Фон мини-карты
+            // Фон
             mapCtx.fillStyle = '#000';
-            mapCtx.fillRect(0, 0, 200, 200);
+            mapCtx.fillRect(0, 0, 150, 150);
             
             // Границы
-            mapCtx.strokeStyle = '#00FFFF';
-            mapCtx.lineWidth = 3;
-            mapCtx.strokeRect(0, 0, 200, 200);
+            mapCtx.strokeStyle = '#00ffff';
+            mapCtx.lineWidth = 2;
+            mapCtx.strokeRect(0, 0, 150, 150);
             
-            // Масштаб для мини-карты
-            const scaleX = 200 / GRID_WIDTH;
-            const scaleY = 200 / GRID_HEIGHT;
+            // Масштаб
+            const scaleX = 150 / GRID_WIDTH;
+            const scaleY = 150 / GRID_HEIGHT;
             
-            // Пакман на карте
+            // Стены
+            for (let y = 0; y < MAP_SIZE; y++) {
+                for (let x = 0; x < MAP_SIZE; x++) {
+                    if (game.map[y][x] === 1) {
+                        mapCtx.fillStyle = '#1a75ff';
+                        mapCtx.fillRect(
+                            x * CELL_SIZE * scaleX,
+                            y * CELL_SIZE * scaleY,
+                            CELL_SIZE * scaleX,
+                            CELL_SIZE * scaleY
+                        );
+                    }
+                }
+            }
+            
+            // Пакман
             const pacmanX = pacman.x * scaleX;
             const pacmanY = pacman.y * scaleY;
             
-            mapCtx.fillStyle = '#FFFF00';
+            mapCtx.fillStyle = '#ffff00';
             mapCtx.beginPath();
-            mapCtx.arc(pacmanX, pacmanY, 5, 0, Math.PI * 2);
+            mapCtx.arc(pacmanX, pacmanY, 3, 0, Math.PI * 2);
             mapCtx.fill();
             
-            // Враги на карте
+            // Призраки
             ghosts.forEach(ghost => {
-                mapCtx.fillStyle = ghost.scared ? '#0000FF' : ghost.color;
+                mapCtx.fillStyle = ghost.scared ? '#0000ff' : ghost.color;
                 mapCtx.beginPath();
-                mapCtx.arc(ghost.x * scaleX, ghost.y * scaleY, 3, 0, Math.PI * 2);
+                mapCtx.arc(ghost.x * scaleX, ghost.y * scaleY, 2, 0, Math.PI * 2);
                 mapCtx.fill();
             });
         }
@@ -1684,39 +1186,19 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             if (game.running && !game.gameOver) {
-                // Обновляем все объекты
                 updatePacman();
                 updateGhosts();
-                updateZombies();
-                updateUFOs();
                 updateParticles();
-                updateCrazyMessages();
+                updateMessages();
                 updateUI();
                 
-                // Рисуем все объекты
                 drawMap();
                 drawPacman();
                 drawGhosts();
-                drawZombies();
-                drawUFOs();
                 drawPowerUps();
                 drawParticles();
-                drawCrazyMessages();
+                drawMessages();
                 drawMapIndicator();
-                
-                // Эффекты на высоком уровне безумия
-                if (game.insanity > 70) {
-                    ctx.save();
-                    ctx.globalAlpha = 0.1;
-                    ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.restore();
-                    
-                    // Дрожание экрана
-                    if (Math.random() > 0.7) {
-                        canvas.style.transform = `translate(${Math.random() * 10 - 5}px, ${Math.random() * 10 - 5}px)`;
-                    }
-                }
             }
             
             requestAnimationFrame(gameLoop);
@@ -1731,12 +1213,10 @@
             game.rage = 0;
             game.insanity = 0;
             game.powerMode = false;
-            game.gravityReversed = false;
-            game.controlsReversed = false;
             game.dotsCollected = 0;
             
-            pacman.x = GRID_WIDTH / 2;
-            pacman.y = GRID_HEIGHT / 2;
+            pacman.x = 15 * CELL_SIZE + CELL_SIZE / 2;
+            pacman.y = 15 * CELL_SIZE + CELL_SIZE / 2;
             pacman.direction.x = 0;
             pacman.direction.y = 0;
             pacman.trail = [];
@@ -1746,8 +1226,7 @@
             updateLivesDisplay();
             startScreen.style.display = 'none';
             gameOverScreen.style.display = 'none';
-            canvas.style.transform = 'none';
-            canvas.style.filter = 'none';
+            rageFill.style.width = '0%';
         }
 
         function endGame() {
@@ -1755,25 +1234,14 @@
             game.gameOver = true;
             
             finalScoreElement.textContent = game.score;
-            finalInsanityElement.textContent = `${Math.floor(game.insanity)}%`;
             gameOverScreen.style.display = 'block';
-            
-            // Отправляем результат в Telegram
-            if (typeof Telegram !== 'undefined') {
-                Telegram.WebApp.sendData(JSON.stringify({
-                    score: game.score,
-                    level: game.level,
-                    insanity: Math.floor(game.insanity),
-                    rage: game.rage
-                }));
-            }
         }
 
         // Обработчики событий
         startBtn.addEventListener('click', startGame);
         restartBtn.addEventListener('click', startGame);
 
-        // Управление Пакманом
+        // Управление
         const setDirection = (dx, dy) => {
             pacman.direction.x = dx;
             pacman.direction.y = dy;
@@ -1785,24 +1253,14 @@
         rightBtn.addEventListener('click', () => setDirection(1, 0));
 
         powerBtn.addEventListener('click', () => {
-            if (game.running) {
-                // Активация случайного павер-апа
-                const randomEffect = Math.random();
-                if (randomEffect < 0.2) {
-                    game.powerMode = true;
-                    game.powerTimer = 150;
-                    showCrazyMessage("РЕЖИМ СИЛЫ! 💪", pacman.x, pacman.y);
-                } else if (randomEffect < 0.4) {
-                    teleportRandom();
-                    showCrazyMessage("ТЕЛЕПОРТ! 🌀", pacman.x, pacman.y);
-                } else if (randomEffect < 0.6) {
-                    ghosts.forEach(g => g.scared = true);
-                    showCrazyMessage("ПРИЗРАКИ ИСПУГАНЫ! 👻", pacman.x, pacman.y);
-                }
+            if (game.running && !game.powerMode) {
+                game.powerMode = true;
+                game.powerTimer = 100;
+                showMessage("БУСТ", pacman.x, pacman.y);
             }
         });
 
-        // Управление клавиатурой
+        // Клавиатура
         document.addEventListener('keydown', (e) => {
             if (!game.running) return;
             
@@ -1832,14 +1290,13 @@
                     break;
                     
                 case 'Space':
-                case 'KeyP':
                     e.preventDefault();
                     powerBtn.click();
                     break;
             }
         });
 
-        // Свайпы для мобильных
+        // Свайпы
         let touchStartX = 0;
         let touchStartY = 0;
         
@@ -1858,29 +1315,13 @@
             const deltaX = touchEndX - touchStartX;
             const deltaY = touchEndY - touchStartY;
             
-            // Определяем направление свайпа
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                // Горизонтальный свайп
-                if (deltaX > 30) setDirection(1, 0);  // Вправо
-                else if (deltaX < -30) setDirection(-1, 0); // Влево
+                if (deltaX > 30) setDirection(1, 0);
+                else if (deltaX < -30) setDirection(-1, 0);
             } else {
-                // Вертикальный свайп
-                if (deltaY > 30) setDirection(0, 1);  // Вниз
-                else if (deltaY < -30) setDirection(0, -1); // Вверх
+                if (deltaY > 30) setDirection(0, 1);
+                else if (deltaY < -30) setDirection(0, -1);
             }
-        });
-
-        // Двойной тап для павер-апа
-        let lastTap = 0;
-        canvas.addEventListener('touchend', (e) => {
-            const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
-            
-            if (tapLength < 300 && tapLength > 0) {
-                powerBtn.click();
-            }
-            
-            lastTap = currentTime;
         });
 
         // Адаптация размера
@@ -1889,7 +1330,7 @@
             canvas.height = window.innerHeight;
         });
 
-        // Запускаем игру
+        // Запуск
         gameLoop();
     </script>
 </body>
